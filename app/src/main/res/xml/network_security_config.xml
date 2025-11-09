@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Mặc định: KHÔNG cho phép cleartext -->
+    <base-config cleartextTrafficPermitted="false" />
+
+    <!-- CHỈ cho phép cleartext tới các host/dev-domain bên dưới -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Emulator trỏ về máy dev -->
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <!-- Localhost (tuỳ TH đặc biệt) -->
+        <domain includeSubdomains="true">localhost</domain>
+        <!-- Ví dụ IP LAN của backend (hãy đổi sang IP thật của bạn) -->
+        <domain includeSubdomains="true">192.168.110.22</domain>
+        <!-- Ví dụ domain dev/staging (hãy đổi sang domain thật của bạn) -->
+        <domain includeSubdomains="true">dev.api.yourdomain.test</domain>
+    </domain-config>
+</network-security-config>

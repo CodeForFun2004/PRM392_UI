@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">ChillCup</string>
+    <!-- 
+    Lưu ý: default_web_client_id được tự động generate bởi Google Services plugin
+    từ google-services.json (OAuth client có client_type = 3)
+    Không cần định nghĩa thủ công ở đây.
+    -->
+    <string name="home">Home</string>
+    <string name="menu">Menu</string>
+    <string name="orders">Orders</string>
+    <string name="profile">Profile</string>
+    
+    <!-- Auth Strings -->
+    <string name="welcome_title">Welcome to ChillCup</string>
+    <string name="welcome_message">Sử dụng app để tích điểm và đổi những ưu đãi chỉ dành riêng cho thành viên bạn nhé!</string>
+    <string name="login_register">Đăng nhập/Đăng ký</string>
+    <string name="login_with_google">Đăng nhập với Google</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="please_login">Vui lòng đăng nhập</string>
+    <string name="login_to_view_orders">Vui lòng đăng nhập để xem đơn hàng của bạn</string>
+    <string name="login_to_view_profile">Vui lòng đăng nhập để xem thông tin cá nhân</string>
+    
+    <!-- Profile Strings -->
+    <string name="profile_title">Thông tin cá nhân</string>
+    <string name="email">Email</string>
+    <string name="name">Tên</string>
+    <string name="phone">Số điện thoại</string>
+    <string name="address">Địa chỉ</string>
+    
+    <!-- Order Strings -->
+    <string name="orders_title">Đơn hàng</string>
+    <string name="no_orders">Chưa có đơn hàng nào</string>
+    <string name="order_status_pending">Đang chờ</string>
+    <string name="order_status_processing">Đang xử lý</string>
+    <string name="order_status_completed">Hoàn thành</string>
+    <string name="order_status_cancelled">Đã hủy</string>
+    
+    <!-- Common -->
+    <string name="search_hint">Tìm đồ uống yêu thích...</string>
+    <string name="new_must_try">Món Mới Phải Thử</string>
+    <string name="delivery">Giao hàng</string>
+    <string name="takeaway">Mang đi</string>
+</resources>
