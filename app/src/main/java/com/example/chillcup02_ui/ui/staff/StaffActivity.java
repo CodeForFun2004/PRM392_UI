@@ -1,13 +1,16 @@
 package com.example.chillcup02_ui.ui.staff;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.chillcup02_ui.R;
+import com.example.chillcup02_ui.auth.LoginActivity;
 import com.example.chillcup02_ui.ui.staff.dashboard.StaffDashboardFragment;
 import com.example.chillcup02_ui.ui.staff.order.StaffOrderFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class StaffActivity extends AppCompatActivity {
 
@@ -34,6 +37,12 @@ public class StaffActivity extends AppCompatActivity {
             selectedFragment = new StaffDashboardFragment();
         } else if (itemId == R.id.nav_orders) {
             selectedFragment = new StaffOrderFragment();
+        } else if (itemId == R.id.nav_logout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(StaffActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
         }
 
         if (selectedFragment != null) {
