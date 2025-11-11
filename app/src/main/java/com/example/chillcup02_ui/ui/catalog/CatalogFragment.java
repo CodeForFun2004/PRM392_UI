@@ -21,7 +21,6 @@ import com.example.chillcup02_ui.databinding.FragmentCatalogBinding;
 import com.example.chillcup02_ui.domain.model.Category;
 import com.example.chillcup02_ui.domain.model.Product;
 import com.example.chillcup02_ui.ui.auth.AuthViewModel;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +57,18 @@ public class CatalogFragment extends Fragment {
         catalogViewModel.loadProducts();
 
         // Observe auth state to show/hide login button
-        authViewModel.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
-            if (user != null) {
+        authViewModel.isLoggedIn().observe(getViewLifecycleOwner(), isLoggedIn -> {
+            if (isLoggedIn) {
                 binding.cardWelcome.setVisibility(View.GONE);
+                String displayName = authViewModel.getUserDisplayName();
+                if (displayName != null && !displayName.isEmpty()) {
+                    binding.tvWelcome.setText("Xin chào, " + displayName + " 👋");
+                } else {
+                    binding.tvWelcome.setText("Xin chào bạn 👋");
+                }
             } else {
                 binding.cardWelcome.setVisibility(View.VISIBLE);
+                binding.tvWelcome.setText("Chào bạn mới 👋");
             }
         });
 
@@ -74,11 +80,17 @@ public class CatalogFragment extends Fragment {
     }
 
     private void setupUI() {
-        FirebaseUser user = authViewModel.getUser();
-        if (user != null) {
+        if (authViewModel.isUserLoggedIn()) {
             binding.cardWelcome.setVisibility(View.GONE);
+            String displayName = authViewModel.getUserDisplayName();
+            if (displayName != null && !displayName.isEmpty()) {
+                binding.tvWelcome.setText("Xin chào, " + displayName + " 👋");
+            } else {
+                binding.tvWelcome.setText("Xin chào bạn 👋");
+            }
         } else {
             binding.cardWelcome.setVisibility(View.VISIBLE);
+            binding.tvWelcome.setText("Chào bạn mới 👋");
         }
     }
 
