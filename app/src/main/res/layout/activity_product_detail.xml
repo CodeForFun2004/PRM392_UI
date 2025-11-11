@@ -150,6 +150,65 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvToppingTitle" />
 
+            <LinearLayout
+                android:id="@+id/llQuantitySelector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:minWidth="120dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rvToppings">
+
+                <TextView
+                    android:id="@+id/btnDecreaseQuantity"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="−"
+                    android:textSize="18sp"
+                    android:textColor="#666666"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/quantity_button_ripple"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Giảm số lượng" />
+
+                <TextView
+                    android:id="@+id/tvQuantity"
+                    android:layout_width="60dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="1"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/quantity_display_background"
+                    android:padding="12dp"
+                    android:contentDescription="Số lượng: 1 ly" />
+
+                <TextView
+                    android:id="@+id/btnIncreaseQuantity"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:text="+"
+                    android:textSize="18sp"
+                    android:textColor="#666666"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/quantity_button_ripple"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Tăng số lượng" />
+
+            </LinearLayout>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddToCart"
                 android:layout_width="0dp"
@@ -162,7 +221,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rvToppings" />
+                app:layout_constraintTop_toBottomOf="@id/llQuantitySelector" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
