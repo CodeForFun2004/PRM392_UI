@@ -8,6 +8,8 @@ import com.example.chillcup02_ui.data.mapper.CategoryMapper;
 import com.example.chillcup02_ui.data.mapper.ProductMapper;
 import com.example.chillcup02_ui.domain.model.Category;
 import com.example.chillcup02_ui.domain.model.Product;
+import com.example.chillcup02_ui.domain.model.Size;
+import com.example.chillcup02_ui.domain.model.Topping;
 
 import java.util.List;
 import retrofit2.Call;
@@ -74,6 +76,61 @@ public class CatalogRepository {
 
             @Override
             public void onFailure(Call<ProductFilterResponse> call, Throwable t) {
+                callback.onError("Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    public void getProductById(String productId, ResultCallback<Product> callback) {
+        ApiClient.getApiService().getProductById(productId).enqueue(new Callback<ProductDto>() {
+            @Override
+            public void onResponse(Call<ProductDto> call, Response<ProductDto> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Product product = ProductMapper.toDomain(response.body());
+                    callback.onSuccess(product);
+                } else {
+                    callback.onError("Failed to load product details");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProductDto> call, Throwable t) {
+                callback.onError("Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    public void getAllSizes(ResultCallback<List<Size>> callback) {
+        ApiClient.getApiService().getAllSizes().enqueue(new Callback<List<Size>>() {
+            @Override
+            public void onResponse(Call<List<Size>> call, Response<List<Size>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Failed to load sizes");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Size>> call, Throwable t) {
+                callback.onError("Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    public void getAllToppings(ResultCallback<List<Topping>> callback) {
+        ApiClient.getApiService().getAllToppings().enqueue(new Callback<List<Topping>>() {
+            @Override
+            public void onResponse(Call<List<Topping>> call, Response<List<Topping>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Failed to load toppings");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Topping>> call, Throwable t) {
                 callback.onError("Network error: " + t.getMessage());
             }
         });

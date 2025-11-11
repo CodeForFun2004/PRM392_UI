@@ -103,7 +103,10 @@ public class CatalogFragment extends Fragment {
         binding.rvProducts.setAdapter(productAdapter);
 
         productAdapter.setOnProductClickListener(product -> {
-            // TODO: Navigate to product detail
+            // Navigate to product detail
+            Intent intent = new Intent(requireContext(), com.example.chillcup02_ui.ui.productdetail.ProductDetailActivity.class);
+            intent.putExtra("product_id", product.getId());
+            startActivity(intent);
         });
     }
 
