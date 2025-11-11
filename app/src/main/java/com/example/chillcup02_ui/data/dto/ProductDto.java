@@ -4,30 +4,18 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class ProductDto {
-
     @SerializedName("_id")
     private String id;
-    @SerializedName("name")
     private String name;
-    @SerializedName("description")
     private String description;
-    @SerializedName("basePrice")
     private double basePrice;
-    @SerializedName("image")
     private String image;
-    @SerializedName("status")
     private String status;
-    @SerializedName("rating")
     private double rating;
-    @SerializedName("sizeOptions")
-    private List<String> sizeOptions; // Sent as ObjectId strings
-    @SerializedName("toppingOptions")
-    private List<String> toppingOptions; // Sent as ObjectId strings
-    @SerializedName("storeId")
+    private List<String> sizeOptions;
+    private List<String> toppingOptions;
     private String storeId;
-    @SerializedName("categoryId")
     private List<String> categoryId;
-    @SerializedName("isBanned")
     private boolean isBanned;
 
     // Getters

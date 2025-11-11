@@ -1,0 +1,52 @@
+[
+  {
+    "_id": "686ccbf34590f2d8aa50db32",
+    "name": "Matcha Đá Xay",
+    "description": "Một lựa chọn tuyệt vời cho ngày mới. Match Đá Xay được pha chế từ những nguyên liệu chất lượng cao, mang đến hương vị đậm đà và sảng khoái. Thích hợp cho mọi thời điểm trong ngày.",
+    "basePrice": 65000,
+    "image": "https://res.cloudinary.com/dgyb5zpqr/image/upload/v1751960562/chill-cup/products/matcha-%C4%91%C3%A1-xay/pmttezmlinphkaul7xdc.png",
+    "status": "new",
+    "rating": 4.8,
+    "sizeOptions": [
+      "686ab86c83458cd1fea70130",
+      "686ab87283458cd1fea70133",
+      "686ab87a83458cd1fea70136"
+    ],
+    "toppingOptions": [
+      "686ab57783458cd1fea7010a",
+      "686ab58183458cd1fea7010d",
+      "686ab58983458cd1fea70110",
+      "686ab5fb83458cd1fea70113",
+      "686ab61683458cd1fea70116",
+      "686ab62583458cd1fea70119"
+    ],
+    "storeId": "686cbb78985742f661838493",
+    "categoryId": ["686b70553670116a4330a181"],
+    "isBanned": false
+  },
+  {
+    "_id": "686ccc404590f2d8aa50db36",
+    "name": "Matcha Latte",
+    "description": "Một lựa chọn tuyệt vời cho ngày mới. Match Latte được pha chế từ những nguyên liệu chất lượng cao, mang đến hương vị đậm đà và sảng khoái. Thích hợp cho mọi thời điểm trong ngày.",
+    "basePrice": 59000,
+    "image": "https://res.cloudinary.com/dgyb5zpqr/image/upload/v1751960639/chill-cup/products/matcha-latte/dazlhybsq1rrp3y2lyxl.png",
+    "status": "new",
+    "rating": 4.8,
+    "sizeOptions": [
+      "686ab86c83458cd1fea70130",
+      "686ab87283458cd1fea70133",
+      "686ab87a83458cd1fea70136"
+    ],
+    "toppingOptions": [
+      "686ab57783458cd1fea7010a",
+      "686ab58183458cd1fea7010d",
+      "686ab58983458cd1fea70110",
+      "686ab5fb83458cd1fea70113",
+      "686ab61683458cd1fea70116",
+      "686ab62583458cd1fea70119"
+    ],
+    "storeId": "686cbb78985742f661838493",
+    "categoryId": ["686b70553670116a4330a181"],
+    "isBanned": false
+  }
+]

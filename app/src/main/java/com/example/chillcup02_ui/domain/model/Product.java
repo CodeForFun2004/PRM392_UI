@@ -9,19 +9,15 @@ public class Product implements Serializable {
     private String description;
     private double basePrice;
     private String image;
-    private ProductStatus status;
+    private String status;
     private double rating;
-    private List<String> sizeOptions;
-    private List<String> toppingOptions;
+    private List<Size> sizeOptions;
+    private List<Topping> toppingOptions;
     private String storeId;
-    private List<String> categoryIds;
+    private List<String> categoryId; // Assuming category is just an ID for now
     private boolean isBanned;
 
-    public enum ProductStatus {
-        NEW, OLD
-    }
-
-    public Product(String id, String name, String description, double basePrice, String image, ProductStatus status, double rating, List<String> sizeOptions, List<String> toppingOptions, String storeId, List<String> categoryIds, boolean isBanned) {
+    public Product(String id, String name, String description, double basePrice, String image, String status, double rating, List<Size> sizeOptions, List<Topping> toppingOptions, String storeId, List<String> categoryId, boolean isBanned) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -32,7 +28,7 @@ public class Product implements Serializable {
         this.sizeOptions = sizeOptions;
         this.toppingOptions = toppingOptions;
         this.storeId = storeId;
-        this.categoryIds = categoryIds;
+        this.categoryId = categoryId;
         this.isBanned = isBanned;
     }
 
@@ -42,11 +38,11 @@ public class Product implements Serializable {
     public String getDescription() { return description; }
     public double getBasePrice() { return basePrice; }
     public String getImage() { return image; }
-    public ProductStatus getStatus() { return status; }
+    public String getStatus() { return status; }
     public double getRating() { return rating; }
-    public List<String> getSizeOptions() { return sizeOptions; }
-    public List<String> getToppingOptions() { return toppingOptions; }
+    public List<Size> getSizeOptions() { return sizeOptions; }
+    public List<Topping> getToppingOptions() { return toppingOptions; }
     public String getStoreId() { return storeId; }
-    public List<String> getCategoryIds() { return categoryIds; }
+    public List<String> getCategoryId() { return categoryId; }
     public boolean isBanned() { return isBanned; }
 }

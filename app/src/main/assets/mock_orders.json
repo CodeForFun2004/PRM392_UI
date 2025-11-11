@@ -1,0 +1,126 @@
+
+[
+  {
+    "_id": "6880e67dce3ffa9928186df6",
+    "userId": "68678324da0d632a1400601c",
+    "storeId": "686cbb78985742f661838493",
+    "orderNumber": "ORD-6pj4y4",
+    "items": [
+      {
+        "productId": "686ccbf34590f2d8aa50db32",
+        "name": "Matcha Đá Xay",
+        "size": "S",
+        "toppings": [
+          { "id": "686ab62583458cd1fea70119", "name": "Trân châu trắng" },
+          { "id": "686ab57783458cd1fea7010a", "name": "Trân châu đen" }
+        ],
+        "quantity": 1,
+        "price": 63000,
+        "_id": "6880e67dce3ffa9928186df7"
+      },
+      {
+        "productId": "686ccf554590f2d8aa50db56",
+        "name": "Latte Caramel",
+        "size": "L",
+        "toppings": [
+           { "id": "686ab62583458cd1fea70119", "name": "Trân châu trắng" }
+        ],
+        "quantity": 1,
+        "price": 87700,
+        "_id": "6880e67dce3ffa9928186dfa"
+      }
+    ],
+    "subtotal": 150700,
+    "deliveryFee": 10000,
+    "tax": 15070,
+    "total": 175770,
+    "deliveryAddress": "Khu đô thị FPT Đà Nẵng",
+    "phone": "079 599 3433",
+    "paymentMethod": "vietqr",
+    "qrCodeUrl": "https://img.vietqr.io/image/vcb-1028360348-compact2.jpg?amount=175770&addInfo=ORD-6pj4y4",
+    "deliveryTime": "25-35 phút",
+    "status": "COMPLETED",
+    "shipperAssigned": "686cbde34590f2d8aa50db01",
+    "createdAt": "2025-07-23T13:41:17.529Z"
+  },
+  {
+    "_id": "687f3668379fceec2e6a09eb",
+    "userId": "68678324da0d632a1400601c",
+    "storeId": "686cbb78985742f661838493",
+    "orderNumber": "ORD-n6dp6c",
+    "items": [
+       {
+        "productId": "686dd53ffef042c1f3c12c63",
+        "name": "Trà Quế Mật Ong",
+        "quantity": 1,
+        "_id": "687f3668379fceec2e6a09ee",
+        "price": 59000
+      }
+    ],
+    "subtotal": 629200,
+    "deliveryFee": 10000,
+    "tax": 62920,
+    "total": 702120,
+    "deliveryAddress": "31, Phú Cang, thành phố Huế",
+    "phone": "0123456789",
+    "paymentMethod": "cod",
+    "deliveryTime": "25-35 phút",
+    "status": "DELIVERING",
+    "createdAt": "2025-07-22T06:57:44.231Z"
+  },
+  {
+    "_id": "68819b8d68b7dd2066dc2fb2",
+    "userId": "686216dc8cd276266732d1d2",
+    "storeId": "686cbb78985742f661838493",
+    "orderNumber": "ORD-vuhgwq",
+    "items": [
+       {
+        "productId": "686ccdc54590f2d8aa50db4a",
+        "name": "Matcha Xoài",
+        "size": "M",
+        "toppings": [],
+        "quantity": 2,
+        "price": 118000,
+        "_id": "68819b8d68b7dd2066dc2fb4"
+      }
+    ],
+    "subtotal": 250000,
+    "deliveryFee": 10000,
+    "tax": 25000,
+    "total": 285000,
+    "deliveryAddress": "Đại học FPT Đà Nẵng",
+    "phone": "0912345678",
+    "paymentMethod": "vietqr",
+    "qrCodeUrl": "https://img.vietqr.io/image/vcb-1028360348-compact2.jpg?amount=285000&addInfo=ORD-vuhgwq",
+    "deliveryTime": "25-35 phút",
+    "status": "PENDING",
+    "createdAt": "2025-07-24T02:33:49.477Z"
+  },
+  {
+    "_id": "688083e181a48099bc0bcccd",
+    "userId": "686216dc8cd276266732d1d2",
+    "storeId": "686cbb78985742f661838493",
+    "orderNumber": "ORD-h9bcc9",
+    "items": [
+       {
+        "productId": "686cd00b4590f2d8aa50db68",
+        "name": "Capuchino",
+        "quantity": 3,
+        "_id": "688083e181a48099bc0bccce",
+        "price": 100000
+      }
+    ],
+    "subtotal": 165000,
+    "deliveryFee": 10000,
+    "tax": 16500,
+    "total": 191500,
+    "deliveryAddress": "31, Phú Cang, thành phố Huế",
+    "phone": "0123456789",
+    "paymentMethod": "cod",
+    "deliveryTime": "25-35 phút",
+    "status": "CANCELLED",
+    "cancelReason": "khách bom",
+    "shipperAssigned": "686cbde34590f2d8aa50db01",
+    "createdAt": "2025-07-23T06:40:33.129Z"
+  }
+]

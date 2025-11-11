@@ -4,23 +4,23 @@ import java.io.Serializable;
 
 public class Size implements Serializable {
     private String id;
-    private String sizeShortName; // e.g., "S", "M", "L"
-    private String name; // e.g., "Small", "Medium", "Large"
-    private double priceMultiplier;
+    private String size;
+    private String name;
+    private double multiplier;
     private String volume;
 
-    public Size(String id, String sizeShortName, String name, double priceMultiplier, String volume) {
+    public Size(String id, String size, String name, double multiplier, String volume) {
         this.id = id;
-        this.sizeShortName = sizeShortName;
+        this.size = size;
         this.name = name;
-        this.priceMultiplier = priceMultiplier;
+        this.multiplier = multiplier;
         this.volume = volume;
     }
 
     // Getters
     public String getId() { return id; }
-    public String getSizeShortName() { return sizeShortName; }
+    public String getSize() { return size; }
     public String getName() { return name; }
-    public double getPriceMultiplier() { return priceMultiplier; }
+    public double getMultiplier() { return multiplier; }
     public String getVolume() { return volume; }
 }

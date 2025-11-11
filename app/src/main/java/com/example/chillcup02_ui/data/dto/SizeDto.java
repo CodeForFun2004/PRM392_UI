@@ -3,16 +3,11 @@ package com.example.chillcup02_ui.data.dto;
 import com.google.gson.annotations.SerializedName;
 
 public class SizeDto {
-
     @SerializedName("_id")
     private String id;
-    @SerializedName("size")
-    private String size; // e.g., "S", "M", "L"
-    @SerializedName("name")
-    private String name; // e.g., "Small", "Medium", "Large"
-    @SerializedName("multiplier")
+    private String size;
+    private String name;
     private double multiplier;
-    @SerializedName("volume")
     private String volume;
 
     // Getters

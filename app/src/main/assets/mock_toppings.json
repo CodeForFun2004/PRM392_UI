@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "686ab57783458cd1fea7010a",
+    "name": "Trân châu đen",
+    "price": 5000,
+    "icon": "icon_placeholder"
+  },
+  {
+    "_id": "686ab58183458cd1fea7010d",
+    "name": "Trân châu trắng",
+    "price": 5000,
+    "icon": "icon_placeholder"
+  },
+  {
+    "_id": "686ab58983458cd1fea70110",
+    "name": "Thạch rau câu",
+    "price": 7000,
+    "icon": "icon_placeholder"
+  },
+  {
+    "_id": "686ab5fb83458cd1fea70113",
+    "name": "Pudding trứng",
+    "price": 8000,
+    "icon": "icon_placeholder"
+  },
+  {
+    "_id": "686ab61683458cd1fea70116",
+    "name": "Kem cheese",
+    "price": 10000,
+    "icon": "icon_placeholder"
+  },
+  {
+    "_id": "686ab62583458cd1fea70119",
+    "name": "Hạt sen",
+    "price": 12000,
+    "icon": "icon_placeholder"
+  }
+]

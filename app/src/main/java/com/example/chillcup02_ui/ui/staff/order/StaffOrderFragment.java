@@ -22,7 +22,6 @@ import com.example.chillcup02_ui.ui.staff.order.OrderDetailActivity;
 
 import java.util.ArrayList;
 
-// Implement the new listener interface
 public class StaffOrderFragment extends Fragment implements StaffOrderAdapter.OnDetailsClickListener {
 
     private StaffViewModel viewModel;
@@ -33,7 +32,6 @@ public class StaffOrderFragment extends Fragment implements StaffOrderAdapter.On
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the new layout for this fragment
         return inflater.inflate(R.layout.fragment_staff_order, container, false);
     }
 
@@ -43,18 +41,18 @@ public class StaffOrderFragment extends Fragment implements StaffOrderAdapter.On
 
         viewModel = new ViewModelProvider(requireActivity()).get(StaffViewModel.class);
 
-        // Initialize views from the new, more detailed layout
         rvOrders = view.findViewById(R.id.rvOrders);
         spFilterStatus = view.findViewById(R.id.spFilterStatus);
-        // We can add listeners to the spinner and refresh button later
 
         setupRecyclerView();
         observeViewModel();
+
+        // The call to loadOrders() is no longer needed here.
+        // The ViewModel now handles loading data automatically in its constructor.
     }
 
     private void setupRecyclerView() {
         rvOrders.setLayoutManager(new LinearLayoutManager(getContext()));
-        // The fragment now passes itself as the OnDetailsClickListener
         adapter = new StaffOrderAdapter(new ArrayList<>(), this);
         rvOrders.setAdapter(adapter);
     }
@@ -67,15 +65,9 @@ public class StaffOrderFragment extends Fragment implements StaffOrderAdapter.On
         });
     }
 
-    /**
-     * This method is now called when the 'Details' button on an order row is clicked.
-     * It will launch the new OrderDetailActivity.
-     */
     @Override
     public void onDetailsClick(Order order) {
         Intent intent = new Intent(getActivity(), OrderDetailActivity.class);
-        // Pass the Order object itself to the detail activity.
-        // The Order class and its children must implement Serializable for this to work.
         intent.putExtra("ORDER_EXTRA", order);
         startActivity(intent);
     }

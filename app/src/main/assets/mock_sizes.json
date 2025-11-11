@@ -1,0 +1,29 @@
+[
+  {
+    "_id": "686ab86c83458cd1fea70130",
+    "size": "S",
+    "name": "Nhỏ",
+    "multiplier": 0.8,
+    "volume": "350ml",
+    "createdAt": "2025-07-06T17:54:52.854Z",
+    "updatedAt": "2025-07-06T17:54:52.854Z"
+  },
+  {
+    "_id": "686ab87283458cd1fea70133",
+    "size": "M",
+    "name": "Vừa",
+    "multiplier": 1,
+    "volume": "500ml",
+    "createdAt": "2025-07-06T17:54:58.391Z",
+    "updatedAt": "2025-07-06T17:54:58.391Z"
+  },
+  {
+    "_id": "686ab87a83458cd1fea70136",
+    "size": "L",
+    "name": "Lớn",
+    "multiplier": 1.3,
+    "volume": "700ml",
+    "createdAt": "2025-07-06T17:55:06.330Z",
+    "updatedAt": "2025-07-06T17:55:06.330Z"
+  }
+]

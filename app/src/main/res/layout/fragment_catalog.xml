@@ -93,14 +93,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cardWelcome" />
 
-            <TextView
-                android:id="@+id/tvComingSoon"
-                android:layout_width="wrap_content"
+            <!-- The RecyclerView for products that was missing -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvProducts"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Nội dung sẽ được cập nhật..."
-                android:textColor="@color/text_secondary"
-                android:textSize="14sp"
+                android:nestedScrollingEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvSectionTitle" />
