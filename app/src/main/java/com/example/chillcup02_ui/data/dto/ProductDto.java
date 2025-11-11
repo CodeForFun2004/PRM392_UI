@@ -1,6 +1,7 @@
 package com.example.chillcup02_ui.data.dto;
 
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.JsonAdapter;
 import java.util.List;
 
 public class ProductDto {
@@ -32,6 +33,7 @@ public class ProductDto {
     private List<ToppingDto> toppingOptions;
 
     @SerializedName("storeId")
+    @JsonAdapter(StoreIdDeserializer.class)
     private String storeId;
 
     @SerializedName("categoryId")

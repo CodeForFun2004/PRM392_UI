@@ -11,7 +11,7 @@ public class ApiClient {
     // Try multiple possible URLs for different testing scenarios
     private static final String[] POSSIBLE_BASE_URLS = {
         "http://10.0.2.2:8080",    // Android emulator
-        "http://192.168.1.100:8080", // Common local network IP (adjust as needed)
+        "http://192.168.12.73:8080", // Common local network IP (adjust as needed)
         "http://localhost:8080"     // Direct localhost (for testing)
     };
 
