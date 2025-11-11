@@ -45,8 +45,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.VH> {
 		holder.tvName.setText(it.product.name);
 		// product model does not have category in this mock; show placeholder
 		holder.tvCategory.setText("Món Nóng");
-		holder.tvPrice.setText(CurrencyUtils.formatVnd(it.unitPrice));
-		holder.tvQty.setText(String.valueOf(it.qty));
+		holder.tvPrice.setText(CurrencyUtils.formatVnd((long) it.getUnitPrice()));
+		holder.tvQty.setText(String.valueOf(it.getQty()));
 
 		// image: keep placeholder (no image loader configured)
 		holder.ivImage.setImageResource(R.mipmap.ic_launcher);

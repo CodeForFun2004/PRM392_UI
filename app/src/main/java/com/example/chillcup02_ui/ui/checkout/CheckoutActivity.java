@@ -1,6 +1,7 @@
 package com.example.chillcup02_ui.ui.checkout;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+
+import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import android.widget.FrameLayout;
 import android.os.Handler;
@@ -214,7 +217,8 @@ public class CheckoutActivity extends AppCompatActivity implements InformationDi
 
 		com.example.chillcup02_ui.network.ApiService api = com.example.chillcup02_ui.network.ApiClient.service();
 		api.createOrder(req).enqueue(new retrofit2.Callback<com.example.chillcup02_ui.network.model.OrderResponse>() {
-			@Override
+			@RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
 			public void onResponse(retrofit2.Call<com.example.chillcup02_ui.network.model.OrderResponse> call, retrofit2.Response<com.example.chillcup02_ui.network.model.OrderResponse> response) {
 				if (response.isSuccessful() && response.body() != null && response.body().order != null) {
 					// map network order to domain order and open detail
@@ -306,7 +310,7 @@ public class CheckoutActivity extends AppCompatActivity implements InformationDi
 			Order.OrderItem oi = new Order.OrderItem();
 			oi.name = ci.product != null ? ci.product.name : "Item";
 			oi.quantity = ci.qty;
-			oi.price = ci.unitPrice;
+			oi.price = (int) ci.unitPrice;
 			items.add(oi);
 		}
 		order.items = items;
@@ -330,7 +334,8 @@ public class CheckoutActivity extends AppCompatActivity implements InformationDi
 
 		com.example.chillcup02_ui.network.ApiService api = com.example.chillcup02_ui.network.ApiClient.service();
 		api.createOrder(req).enqueue(new retrofit2.Callback<com.example.chillcup02_ui.network.model.OrderResponse>() {
-			@Override
+			@RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
 			public void onResponse(retrofit2.Call<com.example.chillcup02_ui.network.model.OrderResponse> call, retrofit2.Response<com.example.chillcup02_ui.network.model.OrderResponse> response) {
 				if (response.isSuccessful() && response.body() != null && response.body().order != null) {
 					// success from server - map to domain Order and open detail
