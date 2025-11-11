@@ -58,4 +58,13 @@
     <string name="new_must_try">Món Mới Phải Thử</string>
     <string name="delivery">Giao hàng</string>
     <string name="takeaway">Mang đi</string>
+
+    <!-- Price Filter Options -->
+    <string-array name="price_filter_options">
+        <item>Tất cả giá</item>
+        <item>Dưới 30.000đ</item>
+        <item>30.000đ - 50.000đ</item>
+        <item>50.000đ - 100.000đ</item>
+        <item>Trên 100.000đ</item>
+    </string-array>
 </resources>
