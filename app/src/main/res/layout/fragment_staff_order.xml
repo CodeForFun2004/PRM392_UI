@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9FAFB"
+    tools:context=".ui.staff.order.StaffOrderFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvOrdersTitle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Quản lý đơn hàng"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#1F2937" />
+
+            <ImageButton
+                android:id="@+id/btnRefresh"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:src="@android:drawable/ic_popup_sync"
+                android:contentDescription="Refresh"
+                android:tint="#10B981" />
+
+        </LinearLayout>
+
+        <!-- Filters row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <Spinner
+                android:id="@+id/spFilterStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:entries="@array/order_status_filter"
+                android:spinnerMode="dropdown" />
+
+            <Space android:layout_width="12dp" android:layout_height="0dp" />
+
+            <Button
+                android:id="@+id/btnSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Tìm"
+                android:backgroundTint="#10B981"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+        <!-- Orders list -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvOrders"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="12dp" />
+
+        <!-- Empty placeholder -->
+        <TextView
+            android:id="@+id/tvEmptyOrders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Không có đơn hàng"
+            android:textColor="#9CA3AF"
+            android:gravity="center"
+            android:visibility="gone"
+            android:paddingTop="24dp" />
+
+    </LinearLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

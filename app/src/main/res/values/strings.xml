@@ -1,10 +1,6 @@
 <resources>
     <string name="app_name">ChillCup</string>
-    <!-- 
-    Lưu ý: default_web_client_id được tự động generate bởi Google Services plugin
-    từ google-services.json (OAuth client có client_type = 3)
-    Không cần định nghĩa thủ công ở đây.
-    -->
+
     <string name="home">Home</string>
     <string name="menu">Menu</string>
     <string name="orders">Orders</string>

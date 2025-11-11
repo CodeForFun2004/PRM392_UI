@@ -47,6 +47,17 @@
             android:name=".auth.TestGoogleLoginActivity"
             android:exported="false"
             android:label="Test Google Login" />
+
+        <!-- Staff Activity Declaration -->
+        <activity
+            android:name=".ui.staff.StaffActivity"
+            android:exported="false" />
+
+        <!-- Staff Order Detail -->
+        <activity
+            android:name=".ui.staff.order.OrderDetailActivity"
+            android:exported="false" />
+            
     </application>
 
 </manifest>
