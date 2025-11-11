@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +42,9 @@ public class ProductDetailActivity extends AppCompatActivity {
     private RecyclerView rvSizes;
     private TextView tvToppingTitle;
     private RecyclerView rvToppings;
+    private TextView tvQuantity;
+    private TextView btnDecreaseQuantity;
+    private TextView btnIncreaseQuantity;
     private TextView tvError;
     private View progressBar;
     private TextView btnAddToCart;
@@ -52,6 +57,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private Product currentProduct;
     private Size selectedSize;
     private List<Topping> selectedToppings;
+    private int selectedQuantity = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,6 +98,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         rvSizes = findViewById(R.id.rvSizes);
         tvToppingTitle = findViewById(R.id.tvToppingTitle);
         rvToppings = findViewById(R.id.rvToppings);
+        tvQuantity = findViewById(R.id.tvQuantity);
+        btnDecreaseQuantity = findViewById(R.id.btnDecreaseQuantity);
+        btnIncreaseQuantity = findViewById(R.id.btnIncreaseQuantity);
         tvError = findViewById(R.id.tvError);
         progressBar = findViewById(R.id.progressBar);
         btnAddToCart = findViewById(R.id.btnAddToCart);
@@ -99,6 +108,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         // Setup RecyclerViews
         rvSizes.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvToppings.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        // Initialize quantity display
+        updateQuantityDisplay();
     }
 
     private void setupAdapters() {
@@ -164,9 +176,19 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
+        btnDecreaseQuantity.setOnClickListener(v -> {
+            playScaleAnimation(v);
+            decreaseQuantity();
+        });
+        btnIncreaseQuantity.setOnClickListener(v -> {
+            playScaleAnimation(v);
+            increaseQuantity();
+        });
+
         btnAddToCart.setOnClickListener(v -> {
             // TODO: Implement add to cart functionality with selected options
             String message = "Đã thêm vào giỏ hàng!\n";
+            message += "Số lượng: " + selectedQuantity + "\n";
             if (selectedSize != null) {
                 message += "Size: " + selectedSize.getName() + "\n";
             }
@@ -221,8 +243,57 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
         }
 
-        double totalPrice = (basePrice * sizeMultiplier) + toppingsPrice;
+        double unitPrice = (basePrice * sizeMultiplier) + toppingsPrice;
+        double totalPrice = unitPrice * selectedQuantity;
         tvProductPrice.setText(PriceUtil.formatPrice(totalPrice));
+    }
+
+    private void increaseQuantity() {
+        if (selectedQuantity < 10) { // Max quantity limit of 10
+            selectedQuantity++;
+            updateQuantityDisplay();
+            updateTotalPrice();
+            updateAccessibilityDescription();
+        }
+    }
+
+    private void decreaseQuantity() {
+        if (selectedQuantity > 1) {
+            selectedQuantity--;
+            updateQuantityDisplay();
+            updateTotalPrice();
+            updateAccessibilityDescription();
+        }
+    }
+
+    private void updateQuantityDisplay() {
+        if (tvQuantity != null) {
+            tvQuantity.setText(String.valueOf(selectedQuantity));
+        }
+        // Update button states
+        if (btnDecreaseQuantity != null) {
+            btnDecreaseQuantity.setEnabled(selectedQuantity > 1);
+            btnDecreaseQuantity.setAlpha(selectedQuantity > 1 ? 1.0f : 0.5f);
+        }
+    }
+
+    private void playScaleAnimation(View view) {
+        ScaleAnimation scaleAnimation = new ScaleAnimation(
+                1.0f, 0.9f, // fromX, toX
+                1.0f, 0.9f, // fromY, toY
+                Animation.RELATIVE_TO_SELF, 0.5f, // pivotXType, pivotX
+                Animation.RELATIVE_TO_SELF, 0.5f  // pivotYType, pivotY
+        );
+        scaleAnimation.setDuration(100); // 100ms
+        scaleAnimation.setRepeatMode(Animation.REVERSE);
+        scaleAnimation.setRepeatCount(1);
+        view.startAnimation(scaleAnimation);
+    }
+
+    private void updateAccessibilityDescription() {
+        if (tvQuantity != null) {
+            tvQuantity.setContentDescription("Số lượng: " + selectedQuantity + " ly");
+        }
     }
 
     @Override
