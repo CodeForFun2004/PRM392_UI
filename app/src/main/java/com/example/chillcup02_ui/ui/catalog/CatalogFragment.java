@@ -2,9 +2,12 @@ package com.example.chillcup02_ui.ui.catalog;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,6 +50,7 @@ public class CatalogFragment extends Fragment {
 
         setupUI();
         setupRecyclerViews();
+        setupSearchAndFilter();
         setupObservers();
 
         // Load categories and products
@@ -107,6 +111,33 @@ public class CatalogFragment extends Fragment {
             Intent intent = new Intent(requireContext(), com.example.chillcup02_ui.ui.productdetail.ProductDetailActivity.class);
             intent.putExtra("product_id", product.getId());
             startActivity(intent);
+        });
+    }
+
+    private void setupSearchAndFilter() {
+        // Search functionality
+        binding.etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                catalogViewModel.setSearchQuery(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        // Price filter functionality
+        binding.spinnerPriceFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                catalogViewModel.setPriceFilter(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 

@@ -81,6 +81,65 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Search and Filter Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSearchFilter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardWelcome">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <!-- Search Bar -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilSearch"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Tìm kiếm sản phẩm..."
+                        app:endIconMode="clear_text"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSearch"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Price Filter Spinner -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPriceFilter"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Lọc theo giá"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tilSearch">
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/spinnerPriceFilter"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:entries="@array/price_filter_options" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
             <TextView
                 android:id="@+id/tvCategoriesTitle"
                 android:layout_width="wrap_content"
@@ -91,7 +150,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardWelcome" />
+                app:layout_constraintTop_toBottomOf="@id/cardSearchFilter" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCategories"

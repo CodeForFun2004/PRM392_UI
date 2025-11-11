@@ -9,7 +9,9 @@ import com.example.chillcup02_ui.domain.model.Category;
 import com.example.chillcup02_ui.domain.model.Product;
 import com.example.chillcup02_ui.domain.usecase.LoadCatalogUseCase;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CatalogViewModel extends ViewModel {
 
@@ -21,6 +23,9 @@ public class CatalogViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _loadingProducts = new MutableLiveData<>();
 
     private String selectedCategoryId = null; // null means show all products
+    private List<Product> allProducts = new ArrayList<>(); // Store all products for filtering
+    private String searchQuery = "";
+    private int priceFilterIndex = 0; // 0 = all prices
 
     public CatalogViewModel() {
         CatalogRepository repository = new CatalogRepository();
@@ -77,7 +82,8 @@ public class CatalogViewModel extends ViewModel {
             public void onSuccess(List<Product> products) {
                 android.util.Log.d("CatalogViewModel", "Products loaded successfully: " + (products != null ? products.size() : "null"));
                 _loadingProducts.setValue(false);
-                _products.setValue(products);
+                allProducts = products != null ? new ArrayList<>(products) : new ArrayList<>();
+                applyFilters();
             }
 
             @Override
@@ -107,15 +113,69 @@ public class CatalogViewModel extends ViewModel {
 
     public void selectCategory(String categoryId) {
         this.selectedCategoryId = categoryId;
-        loadProducts();
+        if (selectedCategoryId == null) {
+            applyFilters();
+        } else {
+            loadProducts(); // Load category-specific products
+        }
     }
 
     public void showAllProducts() {
         this.selectedCategoryId = null;
-        loadProducts();
+        applyFilters();
     }
 
     public String getSelectedCategoryId() {
         return selectedCategoryId;
+    }
+
+    public void setSearchQuery(String query) {
+        this.searchQuery = query != null ? query.toLowerCase() : "";
+        applyFilters();
+    }
+
+    public void setPriceFilter(int filterIndex) {
+        this.priceFilterIndex = filterIndex;
+        applyFilters();
+    }
+
+    private void applyFilters() {
+        if (allProducts.isEmpty()) {
+            _products.setValue(new ArrayList<>());
+            return;
+        }
+
+        List<Product> filteredProducts = allProducts.stream()
+            .filter(this::matchesSearchQuery)
+            .filter(this::matchesPriceFilter)
+            .collect(Collectors.toList());
+
+        _products.setValue(filteredProducts);
+    }
+
+    private boolean matchesSearchQuery(Product product) {
+        if (searchQuery.isEmpty()) {
+            return true;
+        }
+        return product.getName().toLowerCase().contains(searchQuery);
+    }
+
+    private boolean matchesPriceFilter(Product product) {
+        double price = product.getBasePrice();
+
+        switch (priceFilterIndex) {
+            case 0: // All prices
+                return true;
+            case 1: // Under 30,000đ
+                return price < 30000;
+            case 2: // 30,000đ - 50,000đ
+                return price >= 30000 && price <= 50000;
+            case 3: // 50,000đ - 100,000đ
+                return price >= 50000 && price <= 100000;
+            case 4: // Over 100,000đ
+                return price > 100000;
+            default:
+                return true;
+        }
     }
 }
