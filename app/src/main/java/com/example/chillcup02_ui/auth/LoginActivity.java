@@ -12,10 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.chillcup02_ui.R;
-import com.example.chillcup02_ui.data.api.MockAuthService;
 import com.example.chillcup02_ui.data.dto.AuthResponse;
 import com.example.chillcup02_ui.data.dto.LoginRequest;
 import com.example.chillcup02_ui.data.dto.RegisterRequest;
+import com.example.chillcup02_ui.data.dto.RegisterResponse;
 import com.example.chillcup02_ui.data.dto.VerifyOtpRequest;
 import com.example.chillcup02_ui.databinding.ActivityLoginBinding;
 import com.example.chillcup02_ui.ui.auth.AuthViewModel;
@@ -43,7 +43,6 @@ public class    LoginActivity extends BaseActivity {
     private ActivityLoginBinding binding;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
-    private MockAuthService mockAuthService;
     private AuthViewModel authViewModel;
     
     private String pendingRegisterEmail;
@@ -59,10 +58,7 @@ public class    LoginActivity extends BaseActivity {
         
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        
-        // Initialize Mock Auth Service
-        mockAuthService = MockAuthService.getInstance();
-        
+
         // Initialize AuthViewModel
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         authViewModel.init(this);
@@ -198,16 +194,9 @@ public class    LoginActivity extends BaseActivity {
         showProgress(true);
         
         LoginRequest request = new LoginRequest(usernameOrEmail, password);
-        mockAuthService.login(request, result -> {
+        authViewModel.loginWithApi(request, result -> {
             showProgress(false);
             if (result.isSuccess()) {
-                AuthResponse response = result.getData();
-                // Save user info to ViewModel
-                authViewModel.setMockUser(
-                    response.getUser(),
-                    response.getAccessToken(),
-                    response.getRefreshToken()
-                );
                 Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 navigateToMain();
             } else {
@@ -287,7 +276,7 @@ public class    LoginActivity extends BaseActivity {
         showProgress(true);
         
         RegisterRequest request = new RegisterRequest(fullname, username, email, password);
-        mockAuthService.register(request, result -> {
+        authViewModel.registerWithApi(request, result -> {
             showProgress(false);
             if (result.isSuccess()) {
                 pendingRegisterEmail = email;
@@ -322,16 +311,9 @@ public class    LoginActivity extends BaseActivity {
         showProgress(true);
         
         VerifyOtpRequest request = new VerifyOtpRequest(pendingRegisterEmail, otp);
-        mockAuthService.verifyOtp(request, result -> {
+        authViewModel.verifyOtpWithApi(request, result -> {
             showProgress(false);
             if (result.isSuccess()) {
-                AuthResponse response = result.getData();
-                // Save user info to ViewModel
-                authViewModel.setMockUser(
-                    response.getUser(),
-                    response.getAccessToken(),
-                    response.getRefreshToken()
-                );
                 pendingRegisterEmail = null; // Clear pending email
                 Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
                 navigateToMain();

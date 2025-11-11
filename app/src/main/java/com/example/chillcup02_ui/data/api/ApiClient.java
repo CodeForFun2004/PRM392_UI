@@ -1,5 +1,8 @@
 package com.example.chillcup02_ui.data.api;
 
+import android.content.Context;
+
+import com.example.chillcup02_ui.auth.AuthInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
@@ -17,6 +20,11 @@ public class ApiClient {
 
     private static final String BASE_URL = "http://10.0.2.2:8080"; // Default to emulator
     private static Retrofit retrofit = null;
+    private static Context appContext = null;
+
+    public static void init(Context context) {
+        appContext = context.getApplicationContext();
+    }
 
     public static Retrofit getClient() {
         if (retrofit == null) {
@@ -25,9 +33,15 @@ public class ApiClient {
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             // Create OkHttp client
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(logging)
-                    .build();
+            OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+                    .addInterceptor(logging);
+
+            // Add auth interceptor if context is available
+            if (appContext != null) {
+                clientBuilder.addInterceptor(new AuthInterceptor(appContext));
+            }
+
+            OkHttpClient client = clientBuilder.build();
 
             // Create Gson instance
             Gson gson = new GsonBuilder()
