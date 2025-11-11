@@ -15,7 +15,6 @@ import com.example.chillcup02_ui.R;
 import com.example.chillcup02_ui.auth.LoginActivity;
 import com.example.chillcup02_ui.databinding.FragmentOrdersBinding;
 import com.example.chillcup02_ui.ui.auth.AuthViewModel;
-import com.google.firebase.auth.FirebaseUser;
 
 public class OrdersFragment extends Fragment {
     
@@ -45,7 +44,7 @@ public class OrdersFragment extends Fragment {
         });
         
         // Check initial state
-        if (authViewModel.getUser() != null) {
+        if (authViewModel.isUserLoggedIn()) {
             showOrdersContent();
         } else {
             showLoginPrompt();

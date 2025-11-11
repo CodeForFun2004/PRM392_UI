@@ -13,14 +13,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:minWidth="100dp"
+        android:minWidth="80dp"
         android:background="?attr/selectableItemBackground">
 
         <TextView
-            android:id="@+id/tvToppingName"
+            android:id="@+id/tvSizeName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Trân châu"
+            android:text="Size M"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -29,17 +29,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvToppingPrice"
+            android:id="@+id/tvSizeVolume"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="+10,000 VND"
-            android:textColor="@color/primary_green"
+            android:text="360ml"
+            android:textColor="@color/text_secondary"
             android:textSize="12sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvToppingName" />
+            app:layout_constraintTop_toBottomOf="@id/tvSizeName" />
 
 
 

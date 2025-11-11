@@ -1,5 +1,7 @@
 package com.example.chillcup02_ui.domain.model;
 
+import java.util.List;
+
 import java.io.Serializable;
 import java.util.List;
 

@@ -9,18 +9,17 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.chillcup02_ui.MainActivity;
 import com.example.chillcup02_ui.R;
-import com.example.chillcup02_ui.ui.staff.StaffActivity; // Import StaffActivity
+import com.example.chillcup02_ui.ui.common.BaseActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class SplashActivity extends AppCompatActivity {
-
+public class SplashActivity extends BaseActivity {
+    
     private static final int SPLASH_DELAY = 2000; // 2 seconds
 
     @Override
@@ -29,7 +28,17 @@ public class SplashActivity extends AppCompatActivity {
 
         setupStatusBar();
         setContentView(R.layout.activity_splash);
-
+        
+        // Apply window insets to root view
+        View rootView = findViewById(android.R.id.content);
+        if (rootView != null) {
+            applyWindowInsets(rootView);
+        }
+        
+        // Check if user is already logged in
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        
         // Navigate after delay
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             // --- DEVELOPMENT SHORTCUT: Go directly to StaffActivity ---

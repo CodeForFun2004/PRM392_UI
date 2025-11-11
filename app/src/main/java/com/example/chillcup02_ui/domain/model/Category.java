@@ -20,4 +20,5 @@ public class Category implements Serializable {
     public String getName() { return name; }
     public String getIcon() { return icon; }
     public String getDescription() { return description; }
+    
 }
