@@ -9,6 +9,7 @@
     <string name="menu">Menu</string>
     <string name="orders">Orders</string>
     <string name="profile">Profile</string>
+    <string name="cart">Cart</string>
     
     <!-- Auth Strings -->
     <string name="welcome_title">Welcome to ChillCup</string>

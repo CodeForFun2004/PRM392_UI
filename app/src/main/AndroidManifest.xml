@@ -35,6 +35,42 @@
             android:name=".MainActivity"
             android:exported="false"
             android:theme="@style/Theme.ChillCup02UI" />
+
+        <!-- Cart Activity -->
+        <activity
+            android:name=".ui.cart.CartActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ChillCup02UI" />
+        
+        <!-- Checkout Activity (mock checkout flow) -->
+        <activity
+            android:name=".ui.checkout.CheckoutActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ChillCup02UI" />
+
+        <!-- VNPay gateway simulator -->
+        <activity
+            android:name=".ui.payment.VnPayGatewayActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ChillCup02UI" />
+
+        <!-- VietQR payment screen -->
+        <activity
+            android:name=".ui.payment.VietQrPaymentActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ChillCup02UI" />
+
+        <!-- Order detail screen -->
+        <activity
+            android:name=".ui.orders.OrderDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ChillCup02UI" />
+        
+        <!-- Order tracking screen -->
+        <activity
+            android:name=".ui.orders.OrderTrackingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ChillCup02UI" />
         
         <!-- Login Activity -->
         <activity

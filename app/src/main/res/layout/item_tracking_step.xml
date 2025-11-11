@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="12dp"
+    android:gravity="center_vertical">
+
+    <LinearLayout
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <FrameLayout
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/ivStepBg"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/circle_inactive"
+                android:contentDescription="" />
+
+            <ImageView
+                android:id="@+id/ivStepIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_check_circle_green"
+                android:tint="#FFFFFF"
+                android:contentDescription="" />
+
+        </FrameLayout>
+
+        <View
+            android:id="@+id/viewLine"
+            android:layout_width="2dp"
+            android:layout_height="48dp"
+            android:background="#E0E0E0"
+            android:visibility="visible"
+            android:layout_marginTop="6dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvStepTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step title"
+            android:textSize="16sp"
+            android:textColor="#000"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvStepDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step description"
+            android:textSize="14sp"
+            android:textColor="#8E8E93"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvStepTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="22:24"
+            android:textSize="12sp"
+            android:textColor="#2196F3"
+            android:layout_marginTop="6dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</LinearLayout>

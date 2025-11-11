@@ -11,6 +11,7 @@ import com.example.chillcup02_ui.ui.auth.AuthViewModel;
 import com.example.chillcup02_ui.ui.catalog.CatalogFragment;
 import com.example.chillcup02_ui.ui.orders.OrdersFragment;
 import com.example.chillcup02_ui.ui.profile.ProfileFragment;
+import com.example.chillcup02_ui.ui.cart.CartFragment;
 
 public class MainActivity extends AppCompatActivity {
     
@@ -27,11 +28,24 @@ public class MainActivity extends AppCompatActivity {
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         
         setupBottomNavigation();
-        
-        // Load home fragment by default
+
+        // If launched with intent asking to open orders or show success, do that
+        boolean openOrderSuccess = getIntent().getBooleanExtra("open_order_success", false);
+        boolean openOrders = getIntent().getBooleanExtra("open_orders", false);
+
         if (savedInstanceState == null) {
-            loadFragment(new CatalogFragment());
-            binding.bottomNavigation.setSelectedItemId(R.id.nav_home);
+            if (openOrderSuccess) {
+                String orderId = getIntent().getStringExtra("order_id");
+                com.example.chillcup02_ui.ui.orders.OrderSuccessFragment f = com.example.chillcup02_ui.ui.orders.OrderSuccessFragment.newInstance(orderId);
+                loadFragment(f);
+                binding.bottomNavigation.setSelectedItemId(R.id.nav_orders);
+            } else if (openOrders) {
+                loadFragment(new OrdersFragment());
+                binding.bottomNavigation.setSelectedItemId(R.id.nav_orders);
+            } else {
+                loadFragment(new CatalogFragment());
+                binding.bottomNavigation.setSelectedItemId(R.id.nav_home);
+            }
         }
     }
     
@@ -44,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new CatalogFragment();
             } else if (itemId == R.id.nav_menu) {
                 selectedFragment = new CatalogFragment(); // Same as home for now
+            } else if (itemId == R.id.nav_cart) {
+                selectedFragment = new CartFragment();
+                
             } else if (itemId == R.id.nav_orders) {
                 selectedFragment = new OrdersFragment();
             } else if (itemId == R.id.nav_profile) {

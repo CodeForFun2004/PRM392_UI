@@ -54,7 +54,8 @@ android {
             dimension = "env"
             applicationIdSuffix = ".dev"
             resValue("string", "app_name", "ChillCup (Dev)")
-            buildConfigField("String", "BASE_URL", "\"mock://\"")
+            // For emulator to reach host machine use 10.0.2.2:8080 where The-Chill-Cup-API runs
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/\"")
         }
         create("prod") {
             dimension = "env"
