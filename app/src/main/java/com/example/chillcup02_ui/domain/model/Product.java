@@ -4,8 +4,8 @@ import java.util.List;
 
 public class Product {
 
-    private String id;
-    private String name;
+    public String id;
+    public String name;
     private String description;
     private double basePrice;
     private String image;
@@ -35,6 +35,24 @@ public class Product {
         this.categories = categories;
         this.isBanned = isBanned;
     }
+
+    public Product(String id, String name, double basePrice, String image) {
+        this(
+                id,
+                name,
+                "",                 // description
+                basePrice,
+                image,
+                "available",        // status (tuỳ bạn)
+                0.0,                // rating
+                null,               // sizeOptions
+                null,               // toppingOptions
+                null,               // storeName
+                null,               // categories
+                false               // isBanned
+        );
+    }
+
 
     // Getters and setters
     public String getId() { return id; }
