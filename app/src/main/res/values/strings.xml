@@ -21,9 +21,27 @@
     <string name="login_to_view_orders">Vui lòng đăng nhập để xem đơn hàng của bạn</string>
     <string name="login_to_view_profile">Vui lòng đăng nhập để xem thông tin cá nhân</string>
     
+    <!-- Login Form -->
+    <string name="login">Đăng nhập</string>
+    <string name="sign_up">Đăng ký</string>
+    <string name="email_or_username">Email hoặc Username</string>
+    <string name="password">Mật khẩu</string>
+    <string name="fullname">Họ và tên</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="dont_have_account">Chưa có tài khoản? Đăng ký</string>
+    <string name="already_have_account">Đã có tài khoản? Đăng nhập</string>
+    <string name="or_continue_with">Hoặc tiếp tục với</string>
+    <string name="enter_otp">Nhập mã OTP</string>
+    <string name="otp_sent_to_email">Mã OTP đã được gửi đến email của bạn</string>
+    <string name="verify">Xác thực</string>
+    <string name="resend_otp">Gửi lại mã OTP</string>
+    <string name="back_to_login">Quay lại đăng nhập</string>
+    
     <!-- Profile Strings -->
     <string name="profile_title">Thông tin cá nhân</string>
-    <string name="email">Email</string>
     <string name="name">Tên</string>
     <string name="phone">Số điện thoại</string>
     <string name="address">Địa chỉ</string>
@@ -41,4 +59,13 @@
     <string name="new_must_try">Món Mới Phải Thử</string>
     <string name="delivery">Giao hàng</string>
     <string name="takeaway">Mang đi</string>
+
+    <!-- Price Filter Options -->
+    <string-array name="price_filter_options">
+        <item>Tất cả giá</item>
+        <item>Dưới 30.000đ</item>
+        <item>30.000đ - 50.000đ</item>
+        <item>50.000đ - 100.000đ</item>
+        <item>Trên 100.000đ</item>
+    </string-array>
 </resources>

@@ -2,18 +2,18 @@ package com.example.chillcup02_ui;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.chillcup02_ui.databinding.ActivityMainBinding;
 import com.example.chillcup02_ui.ui.auth.AuthViewModel;
 import com.example.chillcup02_ui.ui.catalog.CatalogFragment;
+import com.example.chillcup02_ui.ui.common.BaseActivity;
 import com.example.chillcup02_ui.ui.orders.OrdersFragment;
 import com.example.chillcup02_ui.ui.profile.ProfileFragment;
 import com.example.chillcup02_ui.ui.cart.CartFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     
     private ActivityMainBinding binding;
     private AuthViewModel authViewModel;
@@ -24,8 +24,13 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         
+        // Apply top window insets only to fragment container (for status bar)
+        // Bottom navigation will handle its own insets automatically
+        applyTopWindowInsets(binding.fragmentContainer);
+        
         // Initialize AuthViewModel (shared across fragments)
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        authViewModel.init(this);
         
         setupBottomNavigation();
 

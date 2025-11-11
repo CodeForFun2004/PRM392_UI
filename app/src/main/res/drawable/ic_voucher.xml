@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Ticket shape with notch on left side -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M20,4H4c-1.1,0 -2,0.9 -2,2v12c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2V6C22,4.9 21.1,4 20,4zM20,6v2.5c0,0.3 -0.2,0.5 -0.5,0.5h-3c-0.3,0 -0.5,0.2 -0.5,0.5v2c0,0.3 0.2,0.5 0.5,0.5h3c0.3,0 0.5,0.2 0.5,0.5V18H4v-2.5c0,-0.3 0.2,-0.5 0.5,-0.5h3c0.3,0 0.5,-0.2 0.5,-0.5v-2c0,-0.3 -0.2,-0.5 -0.5,-0.5h-3C4.2,12 4,11.8 4,11.5V6h16z"/>
+
+    <!-- Left side: Two large white circles -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M6,7.5 A1.2,1.2 0 1,1 6,10.1 A1.2,1.2 0 1,1 6,7.5 Z"/>
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M6,13.9 A1.2,1.2 0 1,1 6,16.5 A1.2,1.2 0 1,1 6,13.9 Z"/>
+
+    <!-- Diagonal line connecting the two circles -->
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="0.4"
+        android:pathData="M6.5,8.5 L6.5,15.5"/>
+
+    <!-- Right side: Three small white circles (vertical stack) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M17,8.5 A0.7,0.7 0 1,1 17,9.9 A0.7,0.7 0 1,1 17,8.5 Z"/>
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M17,11.1 A0.7,0.7 0 1,1 17,12.5 A0.7,0.7 0 1,1 17,11.1 Z"/>
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M17,13.7 A0.7,0.7 0 1,1 17,15.1 A0.7,0.7 0 1,1 17,13.7 Z"/>
+
+</vector>

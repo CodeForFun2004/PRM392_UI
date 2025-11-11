@@ -15,6 +15,7 @@ import com.example.chillcup02_ui.R;
 import com.example.chillcup02_ui.auth.LoginActivity;
 import com.example.chillcup02_ui.databinding.FragmentOrdersBinding;
 import com.example.chillcup02_ui.ui.auth.AuthViewModel;
+
 import com.google.firebase.auth.FirebaseUser;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.example.chillcup02_ui.util.MockOrders;
 import com.example.chillcup02_ui.domain.model.Order;
 import java.util.List;
 import com.example.chillcup02_ui.ui.orders.OrderAdapter;
+
 
 public class OrdersFragment extends Fragment {
     
@@ -61,7 +63,7 @@ public class OrdersFragment extends Fragment {
         });
         
         // Check initial state
-        if (authViewModel.getUser() != null) {
+        if (authViewModel.isUserLoggedIn()) {
             showOrdersContent();
         } else {
             showLoginPrompt();

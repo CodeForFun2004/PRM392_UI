@@ -36,6 +36,7 @@
             android:exported="false"
             android:theme="@style/Theme.ChillCup02UI" />
 
+
         <!-- Cart Activity -->
         <activity
             android:name=".ui.cart.CartActivity"
@@ -72,6 +73,14 @@
             android:exported="false"
             android:theme="@style/Theme.ChillCup02UI" />
         
+
+        <!-- Product Detail Activity -->
+        <activity
+            android:name=".ui.productdetail.ProductDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ChillCup02UI" />
+
+
         <!-- Login Activity -->
         <activity
             android:name=".auth.LoginActivity"
@@ -83,6 +92,13 @@
             android:name=".auth.TestGoogleLoginActivity"
             android:exported="false"
             android:label="Test Google Login" />
+        
+        <!-- Voucher Activity -->
+        <activity
+            android:name=".ui.voucher.VoucherActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ChillCup02UI"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
