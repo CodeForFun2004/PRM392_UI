@@ -111,7 +111,7 @@ public class StaffOrderAdapter extends RecyclerView.Adapter<StaffOrderAdapter.Or
                     break;
             }
             tvOrderStatus.setBackgroundResource(backgroundRes);
-           // tvOrderStatus.setTextColor(ContextCompat.getColor(context, colorRes));
+            tvOrderStatus.setTextColor(ContextCompat.getColor(context, colorRes));
         }
     }
 }
