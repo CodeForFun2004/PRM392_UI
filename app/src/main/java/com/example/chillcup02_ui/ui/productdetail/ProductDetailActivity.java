@@ -36,6 +36,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ImageView ivProductImage;
     private TextView tvProductName;
     private TextView tvProductRating;
+    private ImageView btnFavourite;
     private TextView tvProductPrice;
     private TextView tvProductDescription;
     private TextView tvSizeTitle;
@@ -92,6 +93,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         ivProductImage = findViewById(R.id.ivProductImage);
         tvProductName = findViewById(R.id.tvProductName);
         tvProductRating = findViewById(R.id.tvProductRating);
+        btnFavourite = findViewById(R.id.btnFavourite);
         tvProductPrice = findViewById(R.id.tvProductPrice);
         tvProductDescription = findViewById(R.id.tvProductDescription);
         tvSizeTitle = findViewById(R.id.tvSizeTitle);
@@ -183,6 +185,12 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnIncreaseQuantity.setOnClickListener(v -> {
             playScaleAnimation(v);
             increaseQuantity();
+        });
+
+        btnFavourite.setOnClickListener(v -> {
+            if (productId != null) {
+                viewModel.toggleFavourite(productId);
+            }
         });
 
         btnAddToCart.setOnClickListener(v -> {

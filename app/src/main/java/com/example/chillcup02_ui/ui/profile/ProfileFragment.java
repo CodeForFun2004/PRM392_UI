@@ -78,10 +78,14 @@ public class ProfileFragment extends Fragment {
             }
         });
         
+        binding.btnFavourites.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), "Tính năng sản phẩm yêu thích sẽ được phát triển sau", Toast.LENGTH_SHORT).show();
+        });
+
         binding.btnOrderHistory.setOnClickListener(v -> {
             Toast.makeText(requireContext(), "Tính năng lịch sử đơn hàng sẽ được phát triển sau", Toast.LENGTH_SHORT).show();
         });
-        
+
         binding.btnLogin.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), LoginActivity.class);
             startActivity(intent);

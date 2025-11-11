@@ -92,4 +92,26 @@ public class ProductMapper {
         android.util.Log.d("ProductMapper", "Mapped to " + products.size() + " domain products");
         return products;
     }
+
+    public static ProductDto toDto(Product domain) {
+        if (domain == null) return null;
+
+        ProductDto dto = new ProductDto();
+        dto.setId(domain.getId());
+        dto.setName(domain.getName());
+        dto.setDescription(domain.getDescription());
+        dto.setBasePrice(domain.getBasePrice());
+        dto.setImage(domain.getImage());
+        dto.setStatus(domain.getStatus());
+        dto.setRating(domain.getRating());
+        dto.setBanned(domain.isBanned());
+
+        // Note: Size and topping options are not mapped back as they're loaded separately
+        // Store name mapping
+        if (domain.getStoreName() != null) {
+            dto.setStoreId(domain.getStoreName());
+        }
+
+        return dto;
+    }
 }

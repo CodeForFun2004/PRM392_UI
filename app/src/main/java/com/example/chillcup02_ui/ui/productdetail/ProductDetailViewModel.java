@@ -4,10 +4,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.chillcup02_ui.ServiceLocator;
 import com.example.chillcup02_ui.data.repository.CatalogRepository;
+import com.example.chillcup02_ui.data.repository.ToggleResult;
 import com.example.chillcup02_ui.domain.model.Product;
 import com.example.chillcup02_ui.domain.model.Size;
 import com.example.chillcup02_ui.domain.model.Topping;
+import com.example.chillcup02_ui.domain.usecase.ToggleFavouriteUseCase;
 
 import java.util.List;
 
@@ -87,6 +90,24 @@ public class ProductDetailViewModel extends ViewModel {
             @Override
             public void onError(String message) {
                 _error.setValue("Failed to load toppings: " + message);
+            }
+        });
+    }
+
+    public void toggleFavourite(String productId) {
+        ToggleFavouriteUseCase toggleFavouriteUseCase = ServiceLocator.getToggleFavouriteUseCase();
+        toggleFavouriteUseCase.execute(productId, new ToggleFavouriteUseCase.UseCaseCallback<ToggleResult>() {
+            @Override
+            public void onSuccess(ToggleResult result) {
+                // Update UI based on result status
+                String message = "added".equals(result.getStatus()) ?
+                    "Đã thêm vào yêu thích" : "Đã xóa khỏi yêu thích";
+                _error.setValue(message); // Using error LiveData for success messages temporarily
+            }
+
+            @Override
+            public void onError(String error) {
+                _error.setValue("Lỗi: " + error);
             }
         });
     }

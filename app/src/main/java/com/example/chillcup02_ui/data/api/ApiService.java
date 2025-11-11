@@ -2,6 +2,7 @@ package com.example.chillcup02_ui.data.api;
 
 import com.example.chillcup02_ui.data.dto.AuthResponse;
 import com.example.chillcup02_ui.data.dto.CategoryDto;
+import com.example.chillcup02_ui.data.dto.FavouriteDto;
 import com.example.chillcup02_ui.data.dto.LoginRequest;
 import com.example.chillcup02_ui.data.dto.ProductDto;
 import com.example.chillcup02_ui.data.dto.ProductFilterResponse;
@@ -14,8 +15,10 @@ import java.util.List;
 import java.util.Map;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
@@ -54,4 +57,17 @@ public interface ApiService {
 
     @GET("/api/toppings")
     Call<List<Topping>> getAllToppings();
+
+    // Favourite endpoints
+    @POST("/api/favourites")
+    Call<Map<String, Object>> addFavourite(@Body Map<String, String> request);
+
+    @GET("/api/favourites")
+    Call<List<FavouriteDto>> getMyFavourites();
+
+    @DELETE("/api/favourites/{productId}")
+    Call<Map<String, String>> removeFavourite(@Path("productId") String productId);
+
+    @POST("/api/favourites/toggle")
+    Call<Map<String, Object>> toggleFavourite(@Body Map<String, String> request);
 }
