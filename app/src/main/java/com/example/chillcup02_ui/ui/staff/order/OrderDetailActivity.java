@@ -1,76 +1,118 @@
 package com.example.chillcup02_ui.ui.staff.order;
 
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chillcup02_ui.R;
 import com.example.chillcup02_ui.domain.model.Order;
-// Corrected import path
-import com.example.chillcup02_ui.ui.staff.order.OrderItemAdapter;
+import com.example.chillcup02_ui.ui.staff.StaffViewModel;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.util.Collections;
+import java.util.List;
 
 public class OrderDetailActivity extends AppCompatActivity {
 
     private Order order;
+    private StaffViewModel staffViewModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white);
+        // Get the shared ViewModel
+        staffViewModel = new ViewModelProvider(this).get(StaffViewModel.class);
 
         if (getIntent().hasExtra("ORDER_EXTRA")) {
             order = (Order) getIntent().getSerializableExtra("ORDER_EXTRA");
+        } else {
+            Toast.makeText(this, "Error: Order not found.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
         }
 
-        if (order != null) {
-            populateOrderDetails();
-        }
+        bindOrderData();
     }
 
-    private void populateOrderDetails() {
-        TextView tvOrderId = findViewById(R.id.tvOrderId);
-        TextView tvOrderDate = findViewById(R.id.tvOrderDate);
-        TextView tvOrderStatus = findViewById(R.id.tvOrderStatus);
-        TextView tvCustomerName = findViewById(R.id.tvCustomerName);
-        TextView tvCustomerPhone = findViewById(R.id.tvCustomerPhone);
-        TextView tvCustomerAddress = findViewById(R.id.tvCustomerAddress);
-        TextView tvOrderTotal = findViewById(R.id.tvOrderTotal);
-
-        tvOrderId.setText("Order #" + order.getOrderNumber());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-        tvOrderDate.setText("Date: " + sdf.format(order.getCreatedAt()));
-        tvOrderStatus.setText("Status: " + order.getStatus().toString());
-        tvCustomerName.setText("Name: John Doe"); // Mock data
-        tvCustomerPhone.setText("Phone: 0123456789"); // Mock data
-        tvCustomerAddress.setText("Address: " + order.getDeliveryAddress());
-        tvOrderTotal.setText(String.format(Locale.getDefault(), "Total: %,.0f VND", order.getTotal()));
-
+    private void bindOrderData() {
+        TextView tvDetailOrderNumber = findViewById(R.id.tvDetailOrderNumber);
+        TextView tvDetailStatus = findViewById(R.id.tvDetailStatus);
+        TextView tvDetailCustomerName = findViewById(R.id.tvDetailCustomerName);
+        TextView tvDetailAddress = findViewById(R.id.tvDetailAddress);
+        TextView tvDetailPhone = findViewById(R.id.tvDetailPhone);
+        TextView tvDetailSubtotal = findViewById(R.id.tvDetailSubtotal);
+        TextView tvDetailDeliveryFee = findViewById(R.id.tvDetailDeliveryFee);
+        TextView tvDetailTotal = findViewById(R.id.tvDetailTotal);
         RecyclerView rvOrderItems = findViewById(R.id.rvOrderItems);
+        Button btnAdvanceStatus = findViewById(R.id.btnAdvanceStatus);
+        Button btnCancelOrder = findViewById(R.id.btnCancelOrder);
+
+        tvDetailOrderNumber.setText(order.getOrderNumber());
+        tvDetailStatus.setText(order.getStatus().toString());
+        tvDetailCustomerName.setText("Customer Name Placeholder");
+        tvDetailAddress.setText(order.getDeliveryAddress());
+        tvDetailPhone.setText(order.getPhone());
+
+        tvDetailSubtotal.setText(String.format("%,.0f VND", order.getSubtotal()));
+        tvDetailDeliveryFee.setText(String.format("%,.0f VND", order.getDeliveryFee()));
+        tvDetailTotal.setText(String.format("%,.0f VND", order.getTotal()));
+
+        OrderItemAdapter itemsAdapter = new OrderItemAdapter(order.getItems() != null ? order.getItems() : Collections.emptyList());
         rvOrderItems.setLayoutManager(new LinearLayoutManager(this));
-        OrderItemAdapter adapter = new OrderItemAdapter(order.getItems());
-        rvOrderItems.setAdapter(adapter);
+        rvOrderItems.setAdapter(itemsAdapter);
+
+        // --- Set up button actions ---
+        setupActionButtons(btnAdvanceStatus, btnCancelOrder);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish(); // Go back to the previous screen
-            return true;
+    private void setupActionButtons(Button btnAdvanceStatus, Button btnCancelOrder) {
+        List<Order.OrderStatus> nextStatuses = getNextPossibleStatuses(order.getStatus());
+
+        // Only show the advance status button if there is a next logical status
+        if (!nextStatuses.isEmpty() && nextStatuses.get(0) != Order.OrderStatus.CANCELLED) {
+            btnAdvanceStatus.setVisibility(View.VISIBLE);
+            Order.OrderStatus nextStatus = nextStatuses.get(0);
+            btnAdvanceStatus.setText("Advance to " + nextStatus.toString());
+            btnAdvanceStatus.setOnClickListener(v -> {
+                staffViewModel.updateOrderStatus(order.getId(), nextStatus);
+                Toast.makeText(this, "Order updated to " + nextStatus, Toast.LENGTH_SHORT).show();
+                finish(); // Go back to the order list
+            });
+        } else {
+            btnAdvanceStatus.setVisibility(View.GONE);
         }
-        return super.onOptionsItemSelected(item);
+
+        // Allow cancellation unless the order is already completed or cancelled
+        if (order.getStatus() != Order.OrderStatus.COMPLETED && order.getStatus() != Order.OrderStatus.CANCELLED) {
+            btnCancelOrder.setVisibility(View.VISIBLE);
+            btnCancelOrder.setOnClickListener(v -> {
+                staffViewModel.updateOrderStatus(order.getId(), Order.OrderStatus.CANCELLED);
+                Toast.makeText(this, "Order Cancelled", Toast.LENGTH_SHORT).show();
+                finish(); // Go back to the order list
+            });
+        } else {
+            btnCancelOrder.setVisibility(View.GONE);
+        }
+    }
+    
+    // This helper method can be expanded later
+    private List<Order.OrderStatus> getNextPossibleStatuses(Order.OrderStatus currentStatus) {
+        switch (currentStatus) {
+            case PENDING: return Collections.singletonList(Order.OrderStatus.PROCESSING);
+            case PROCESSING: return Collections.singletonList(Order.OrderStatus.PREPARING);
+            case PREPARING: return Collections.singletonList(Order.OrderStatus.READY);
+            case READY: return Collections.singletonList(Order.OrderStatus.DELIVERING);
+            case DELIVERING: return Collections.singletonList(Order.OrderStatus.COMPLETED);
+            default: return Collections.emptyList();
+        }
     }
 }

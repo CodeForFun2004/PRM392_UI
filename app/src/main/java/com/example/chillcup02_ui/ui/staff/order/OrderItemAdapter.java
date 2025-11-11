@@ -10,51 +10,63 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chillcup02_ui.R;
 import com.example.chillcup02_ui.domain.model.OrderItem;
+import com.example.chillcup02_ui.domain.model.Topping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.OrderItemViewHolder> {
 
-    private final List<OrderItem> items;
+    private final List<OrderItem> orderItems;
 
-    public OrderItemAdapter(List<OrderItem> items) {
-        this.items = items;
+    public OrderItemAdapter(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 
     @NonNull
     @Override
     public OrderItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_product, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_item, parent, false);
         return new OrderItemViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull OrderItemViewHolder holder, int position) {
-        holder.bind(items.get(position));
+        holder.bind(orderItems.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return items != null ? items.size() : 0;
+        return orderItems != null ? orderItems.size() : 0;
     }
 
     static class OrderItemViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvProductName;
-        private final TextView tvProductQuantity;
-        private final TextView tvProductPrice;
+        private final TextView tvItemName;
+        private final TextView tvItemMeta;
+        private final TextView tvItemQtyPrice;
 
         public OrderItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvProductName = itemView.findViewById(R.id.tvProductName);
-            tvProductQuantity = itemView.findViewById(R.id.tvProductQuantity);
-            tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
+            tvItemName = itemView.findViewById(R.id.tvItemName);
+            tvItemMeta = itemView.findViewById(R.id.tvItemMeta);
+            tvItemQtyPrice = itemView.findViewById(R.id.tvItemQtyPrice);
         }
 
-        void bind(OrderItem item) {
-            // Corrected the method call from getProductName() to getName()
-            tvProductName.setText(item.getName());
-            tvProductQuantity.setText("x" + item.getQuantity());
-            tvProductPrice.setText(String.format("%,.0f VND", item.getPrice()));
+        public void bind(OrderItem item) {
+            tvItemName.setText(item.getName());
+
+            String toppingsString = item.getToppings().stream()
+                    .map(Topping::getName)
+                    .collect(Collectors.joining(", "));
+
+            String meta = "Size: " + item.getSize();
+            if (!toppingsString.isEmpty()) {
+                meta += " · Topping: " + toppingsString;
+            }
+            tvItemMeta.setText(meta);
+
+            String qtyPrice = String.format("x%d · %,.0f VND", item.getQuantity(), item.getPrice());
+            tvItemQtyPrice.setText(qtyPrice);
         }
     }
 }
