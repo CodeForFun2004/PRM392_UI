@@ -10,14 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.chillcup02_ui.auth.LoginActivity;
 import com.example.chillcup02_ui.databinding.FragmentCatalogBinding;
 import com.example.chillcup02_ui.domain.model.Category;
+import com.example.chillcup02_ui.domain.model.Product;
 import com.example.chillcup02_ui.ui.auth.AuthViewModel;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CatalogFragment extends Fragment {
@@ -26,6 +29,7 @@ public class CatalogFragment extends Fragment {
     private AuthViewModel authViewModel;
     private CatalogViewModel catalogViewModel;
     private CategoryAdapter categoryAdapter;
+    private ProductAdapter productAdapter;
 
     @Nullable
     @Override
@@ -42,11 +46,12 @@ public class CatalogFragment extends Fragment {
         catalogViewModel = new ViewModelProvider(this).get(CatalogViewModel.class);
 
         setupUI();
-        setupRecyclerView();
+        setupRecyclerViews();
         setupObservers();
 
-        // Load categories
+        // Load categories and products
         catalogViewModel.loadCategories();
+        catalogViewModel.loadProducts();
 
         // Observe auth state to show/hide login button
         authViewModel.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
@@ -73,7 +78,8 @@ public class CatalogFragment extends Fragment {
         }
     }
 
-    private void setupRecyclerView() {
+    private void setupRecyclerViews() {
+        // Setup categories RecyclerView
         categoryAdapter = new CategoryAdapter();
         binding.rvCategories.setLayoutManager(
             new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -82,7 +88,22 @@ public class CatalogFragment extends Fragment {
 
         categoryAdapter.setOnCategoryClickListener((category, position) -> {
             categoryAdapter.setSelectedPosition(position);
-            // TODO: Load products for selected category
+            // Filter products by selected category
+            if (category != null) {
+                catalogViewModel.selectCategory(category.getId());
+            } else {
+                catalogViewModel.showAllProducts();
+            }
+        });
+
+        // Setup products RecyclerView
+        productAdapter = new ProductAdapter();
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), 3);
+        binding.rvProducts.setLayoutManager(gridLayoutManager);
+        binding.rvProducts.setAdapter(productAdapter);
+
+        productAdapter.setOnProductClickListener(product -> {
+            // TODO: Navigate to product detail
         });
     }
 
@@ -94,9 +115,29 @@ public class CatalogFragment extends Fragment {
             }
         });
 
-        // Observe loading state
-        catalogViewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        // Observe products
+        catalogViewModel.getProducts().observe(getViewLifecycleOwner(), products -> {
+            android.util.Log.d("CatalogFragment", "Received products: " + (products != null ? products.size() : "null"));
+            if (products != null && !products.isEmpty()) {
+                productAdapter.setProducts(products);
+                binding.tvProductsTitle.setText("Sản phẩm (" + products.size() + ")");
+            } else {
+                productAdapter.setProducts(new ArrayList<>()); // Clear the list
+                binding.tvProductsTitle.setText("Sản phẩm (0)");
+            }
+        });
+
+        // Observe loading states
+        catalogViewModel.getLoadingCategories().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading) {
+                binding.progressBar.setVisibility(View.VISIBLE);
+            }
+        });
+
+        catalogViewModel.getLoadingProducts().observe(getViewLifecycleOwner(), isLoading -> {
+            if (!isLoading) {
+                binding.progressBar.setVisibility(View.GONE);
+            }
         });
 
         // Observe errors
