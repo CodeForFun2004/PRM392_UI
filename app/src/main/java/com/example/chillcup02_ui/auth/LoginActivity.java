@@ -35,16 +35,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class    LoginActivity extends BaseActivity {
-    
+public class LoginActivity extends BaseActivity {
+
     private static final String TAG = "LoginActivity";
-    private static final int RC_SIGN_IN = 9001;
-    
+
     private ActivityLoginBinding binding;
-    private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
+    private FirebaseAuthManager firebaseAuthManager;
     private AuthViewModel authViewModel;
-    
+
     private String pendingRegisterEmail;
     
     @Override
@@ -55,21 +53,14 @@ public class    LoginActivity extends BaseActivity {
         
         // Apply window insets to root view
         applyWindowInsets(binding.getRoot());
-        
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+
+        // Initialize Firebase Auth Manager
+        firebaseAuthManager = FirebaseAuthManager.getInstance();
+        firebaseAuthManager.initGoogleSignIn(this);
 
         // Initialize AuthViewModel
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         authViewModel.init(this);
-        
-        // Configure Google Sign-In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         
         setupTabs();
         setupLoginForm();
@@ -324,50 +315,60 @@ public class    LoginActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         // Check if user is already signed in (Firebase)
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
+        if (firebaseAuthManager.isSignedIn()) {
             // User is already signed in, navigate to MainActivity
             navigateToMain();
         }
     }
     
     private void signInWithGoogle() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        try {
+            Intent signInIntent = firebaseAuthManager.getGoogleSignInIntent();
+            startActivityForResult(signInIntent, FirebaseAuthManager.getGoogleSignInRequestCode());
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "Google Sign-In not initialized", e);
+            Toast.makeText(this, "Lỗi khởi tạo Google Sign-In", Toast.LENGTH_SHORT).show();
+        }
     }
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-                firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) {
-                Log.w(TAG, "Google sign in failed", e);
-                Toast.makeText(this, "Đăng nhập Google thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    
-    private void firebaseAuthWithGoogle(String idToken) {
-        showProgress(true);
 
-        // Use our Firebase Google login API instead of direct Firebase Auth
-        authViewModel.firebaseGoogleLoginWithApi(idToken, result -> {
-            showProgress(false);
-            if (result.isSuccess()) {
-                Log.d(TAG, "Firebase Google login via API success");
-                Toast.makeText(LoginActivity.this, "Đăng nhập Google thành công!", Toast.LENGTH_SHORT).show();
-                navigateToMain();
-            } else {
-                Log.w(TAG, "Firebase Google login via API failed: " + result.getError());
-                Toast.makeText(LoginActivity.this, "Đăng nhập Google thất bại: " + result.getError(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (requestCode == FirebaseAuthManager.getGoogleSignInRequestCode()) {
+            showProgress(true);
+            firebaseAuthManager.handleGoogleSignInResult(data, new FirebaseAuthManager.GoogleSignInResultCallback() {
+                @Override
+                public void onSuccess(GoogleSignInAccount googleAccount, FirebaseUser firebaseUser) {
+                    Log.d(TAG, "Google sign in success: " + googleAccount.getEmail());
+
+                    // Now get the Firebase ID token and send to backend
+                    firebaseAuthManager.getIdToken().observe(LoginActivity.this, idToken -> {
+                        if (idToken != null) {
+                            // Send Firebase ID token to backend API
+                            authViewModel.firebaseGoogleLoginWithApi(idToken, result -> {
+                                showProgress(false);
+                                if (result.isSuccess()) {
+                                    Log.d(TAG, "Firebase Google login via API success");
+                                    Toast.makeText(LoginActivity.this, "Đăng nhập Google thành công!", Toast.LENGTH_SHORT).show();
+                                    navigateToMain();
+                                } else {
+                                    Log.w(TAG, "Firebase Google login via API failed: " + result.getError());
+                                    Toast.makeText(LoginActivity.this, "Đăng nhập Google thất bại: " + result.getError(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(Exception exception) {
+                    showProgress(false);
+                    Log.e(TAG, "Google sign in failed", exception);
+                    Toast.makeText(LoginActivity.this, "Đăng nhập Google thất bại: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
     
     private void navigateToMain() {
