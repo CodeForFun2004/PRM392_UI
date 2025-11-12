@@ -44,6 +44,7 @@ public class LoginActivity extends BaseActivity {
     private AuthViewModel authViewModel;
 
     private String pendingRegisterEmail;
+    private RegisterRequest pendingRegisterRequest;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,11 +146,18 @@ public class LoginActivity extends BaseActivity {
         binding.btnVerifyOtp.setOnClickListener(v -> handleVerifyOtp());
         
         binding.tvResendOtp.setOnClickListener(v -> {
-            if (pendingRegisterEmail != null) {
-                // Resend registration request
-                RegisterRequest request = new RegisterRequest();
-                request.setEmail(pendingRegisterEmail);
-                // In real app, we'd need to store the original request
+            if (pendingRegisterRequest != null) {
+                // Resend registration request with stored data
+                showProgress(true);
+                authViewModel.registerWithApi(pendingRegisterRequest, result -> {
+                    showProgress(false);
+                    if (result.isSuccess()) {
+                        Toast.makeText(this, "Mã OTP mới đã được gửi!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Không thể gửi lại mã OTP: " + result.getError(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
                 Toast.makeText(this, "Vui lòng đăng ký lại", Toast.LENGTH_SHORT).show();
                 showSignUpForm();
                 binding.tabLayout.selectTab(binding.tabLayout.getTabAt(1));
@@ -266,12 +274,19 @@ public class LoginActivity extends BaseActivity {
 
         showProgress(true);
 
-        // Use Firebase Auth for new users (hybrid backend)
-        authViewModel.firebaseRegisterWithApi(email, password, fullname, result -> {
+        // Create register request with all user data
+        RegisterRequest registerRequest = new RegisterRequest(fullname, username, email, password);
+
+        // Send register request to get OTP
+        authViewModel.registerWithApi(registerRequest, result -> {
             showProgress(false);
             if (result.isSuccess()) {
-                Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                navigateToMain();
+                // Store registration data for OTP verification
+                pendingRegisterEmail = email;
+                pendingRegisterRequest = registerRequest;
+
+                Toast.makeText(this, "Mã OTP đã được gửi đến email của bạn!", Toast.LENGTH_SHORT).show();
+                showOtpForm();
             } else {
                 Toast.makeText(this, result.getError(), Toast.LENGTH_SHORT).show();
             }
@@ -279,30 +294,31 @@ public class LoginActivity extends BaseActivity {
     }
     
     private void handleVerifyOtp() {
-        if (pendingRegisterEmail == null) {
-            Toast.makeText(this, "Lỗi: Không tìm thấy email đăng ký", Toast.LENGTH_SHORT).show();
+        if (pendingRegisterEmail == null || pendingRegisterRequest == null) {
+            Toast.makeText(this, "Lỗi: Không tìm thấy thông tin đăng ký", Toast.LENGTH_SHORT).show();
             showSignUpForm();
             binding.tabLayout.selectTab(binding.tabLayout.getTabAt(1));
             return;
         }
-        
-        String otp = binding.etOtp.getText() != null 
-                ? binding.etOtp.getText().toString().trim() 
+
+        String otp = binding.etOtp.getText() != null
+                ? binding.etOtp.getText().toString().trim()
                 : "";
-        
+
         if (TextUtils.isEmpty(otp)) {
             binding.tilOtp.setError("Vui lòng nhập mã OTP");
             return;
         }
-        
+
         binding.tilOtp.setError(null);
         showProgress(true);
-        
+
         VerifyOtpRequest request = new VerifyOtpRequest(pendingRegisterEmail, otp);
         authViewModel.verifyOtpWithApi(request, result -> {
             showProgress(false);
             if (result.isSuccess()) {
-                pendingRegisterEmail = null; // Clear pending email
+                pendingRegisterEmail = null; // Clear pending data
+                pendingRegisterRequest = null;
                 Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
                 navigateToMain();
             } else {
