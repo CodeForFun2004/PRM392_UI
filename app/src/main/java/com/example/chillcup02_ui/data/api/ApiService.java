@@ -2,8 +2,10 @@ package com.example.chillcup02_ui.data.api;
 
 import com.example.chillcup02_ui.data.dto.AuthResponse;
 import com.example.chillcup02_ui.data.dto.CategoryDto;
+import com.example.chillcup02_ui.data.dto.DiscountDto;
 import com.example.chillcup02_ui.data.dto.FavouriteDto;
 import com.example.chillcup02_ui.data.dto.LoginRequest;
+import com.example.chillcup02_ui.data.dto.LoyaltyDto;
 import com.example.chillcup02_ui.data.dto.ProductDto;
 import com.example.chillcup02_ui.data.dto.ProductFilterResponse;
 import com.example.chillcup02_ui.data.dto.RegisterRequest;
@@ -83,4 +85,21 @@ public interface ApiService {
 
     @POST("/api/favourites/toggle")
     Call<Map<String, Object>> toggleFavourite(@Body Map<String, String> request);
+
+    // Discount endpoints
+    @GET("/api/discounts")
+    Call<List<DiscountDto>> getAllDiscounts();
+
+    // Loyalty endpoints
+    @GET("/api/loyalty/me")
+    Call<Map<String, Integer>> getMyPoints();
+
+    @GET("/api/loyalty/history")
+    Call<List<LoyaltyDto.PointHistory>> getPointHistory();
+
+    @GET("/api/loyalty/available-vouchers")
+    Call<Map<String, Object>> getAvailableVouchers();
+
+    @POST("/api/loyalty/redeem")
+    Call<Map<String, String>> redeemVoucher(@Body Map<String, String> request);
 }
