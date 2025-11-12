@@ -39,6 +39,19 @@ public interface ApiService {
     @POST("/api/auth/logout")
     Call<Map<String, String>> logout();
 
+    // Firebase Auth endpoints (for new users)
+    @POST("/api/firebase-auth/register")
+    Call<Map<String, Object>> firebaseRegister(@Body Map<String, String> request);
+
+    @POST("/api/firebase-auth/login")
+    Call<Map<String, Object>> firebaseLogin(@Body Map<String, String> request);
+
+    @POST("/api/firebase-auth/google-login")
+    Call<Map<String, Object>> firebaseGoogleLogin(@Body Map<String, String> request);
+
+    @POST("/api/firebase-auth/logout")
+    Call<Map<String, String>> firebaseLogout();
+
     // Product endpoints
     @GET("/api/categories")
     Call<List<CategoryDto>> getAllCategories();

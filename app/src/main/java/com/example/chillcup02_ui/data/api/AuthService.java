@@ -167,6 +167,131 @@ public class AuthService {
         });
     }
 
+    // Firebase Auth methods (for new users)
+    public void firebaseRegister(String email, String password, String fullname, ResultCallback<Map<String, Object>> callback) {
+        Map<String, String> request = new HashMap<>();
+        request.put("email", email);
+        request.put("password", password);
+        request.put("fullname", fullname);
+
+        Call<Map<String, Object>> call = apiService.firebaseRegister(request);
+        call.enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onResult(Result.success(response.body()));
+                } else {
+                    String errorMessage = "Đăng ký thất bại";
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMessage = response.errorBody().string();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing error response", e);
+                        }
+                    }
+                    callback.onResult(Result.error(errorMessage));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Log.e(TAG, "Firebase register failed", t);
+                callback.onResult(Result.error("Lỗi kết nối: " + t.getMessage()));
+            }
+        });
+    }
+
+    public void firebaseLogin(String email, String password, ResultCallback<Map<String, Object>> callback) {
+        Map<String, String> request = new HashMap<>();
+        request.put("email", email);
+        request.put("password", password);
+
+        Call<Map<String, Object>> call = apiService.firebaseLogin(request);
+        call.enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onResult(Result.success(response.body()));
+                } else {
+                    String errorMessage = "Đăng nhập thất bại";
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMessage = response.errorBody().string();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing error response", e);
+                        }
+                    }
+                    callback.onResult(Result.error(errorMessage));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Log.e(TAG, "Firebase login failed", t);
+                callback.onResult(Result.error("Lỗi kết nối: " + t.getMessage()));
+            }
+        });
+    }
+
+    public void firebaseGoogleLogin(String idToken, ResultCallback<Map<String, Object>> callback) {
+        Map<String, String> request = new HashMap<>();
+        request.put("idToken", idToken);
+
+        Call<Map<String, Object>> call = apiService.firebaseGoogleLogin(request);
+        call.enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onResult(Result.success(response.body()));
+                } else {
+                    String errorMessage = "Đăng nhập Google thất bại";
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMessage = response.errorBody().string();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing error response", e);
+                        }
+                    }
+                    callback.onResult(Result.error(errorMessage));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Log.e(TAG, "Firebase Google login failed", t);
+                callback.onResult(Result.error("Lỗi kết nối: " + t.getMessage()));
+            }
+        });
+    }
+
+    public void firebaseLogout(ResultCallback<Map<String, String>> callback) {
+        Call<Map<String, String>> call = apiService.firebaseLogout();
+        call.enqueue(new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+                if (response.isSuccessful()) {
+                    callback.onResult(Result.success(response.body()));
+                } else {
+                    String errorMessage = "Đăng xuất thất bại";
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMessage = response.errorBody().string();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing error response", e);
+                        }
+                    }
+                    callback.onResult(Result.error(errorMessage));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                Log.e(TAG, "Firebase logout failed", t);
+                callback.onResult(Result.error("Lỗi kết nối: " + t.getMessage()));
+            }
+        });
+    }
+
     public interface ResultCallback<T> {
         void onResult(Result<T> result);
     }
