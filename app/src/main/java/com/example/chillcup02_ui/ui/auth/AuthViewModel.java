@@ -1,15 +1,25 @@
 package com.example.chillcup02_ui.ui.auth;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.chillcup02_ui.data.api.AuthService;
+import com.example.chillcup02_ui.data.dto.AuthResponse;
+import com.example.chillcup02_ui.data.dto.LoginRequest;
+import com.example.chillcup02_ui.data.dto.RegisterRequest;
+import com.example.chillcup02_ui.data.dto.RegisterResponse;
 import com.example.chillcup02_ui.data.dto.UserDto;
+import com.example.chillcup02_ui.data.dto.VerifyOtpRequest;
 import com.example.chillcup02_ui.data.local.AuthPreferences;
+import com.example.chillcup02_ui.util.Result;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Map;
 
 public class AuthViewModel extends ViewModel {
     
@@ -22,6 +32,7 @@ public class AuthViewModel extends ViewModel {
     private String accessToken;
     private String refreshToken;
     private AuthPreferences authPreferences;
+    private AuthService authService;
     
     public AuthViewModel() {
         mAuth = FirebaseAuth.getInstance();
@@ -188,14 +199,203 @@ public class AuthViewModel extends ViewModel {
     public void updateMockUser(UserDto updatedUser) {
         if (updatedUser != null) {
             this.currentMockUser.setValue(updatedUser);
-            
+
             // Save to preferences for persistence
             if (authPreferences != null) {
                 authPreferences.saveMockUser(updatedUser, accessToken, refreshToken);
             }
         }
     }
-    
+
+    // API Authentication methods
+    public void loginWithApi(LoginRequest request, AuthService.ResultCallback<AuthResponse> callback) {
+        if (authService == null) {
+            authService = new AuthService();
+        }
+        authService.login(request, result -> {
+            if (result.isSuccess()) {
+                AuthResponse response = result.getData();
+                setMockUser(response.getUser(), response.getAccessToken(), response.getRefreshToken());
+            }
+            callback.onResult(result);
+        });
+    }
+
+    public void registerWithApi(RegisterRequest request, AuthService.ResultCallback<RegisterResponse> callback) {
+        if (authService == null) {
+            authService = new AuthService();
+        }
+        authService.registerRequest(request, callback);
+    }
+
+    public void verifyOtpWithApi(VerifyOtpRequest request, AuthService.ResultCallback<AuthResponse> callback) {
+        if (authService == null) {
+            authService = new AuthService();
+        }
+        authService.verifyRegister(request, result -> {
+            if (result.isSuccess()) {
+                AuthResponse response = result.getData();
+                setMockUser(response.getUser(), response.getAccessToken(), response.getRefreshToken());
+            }
+            callback.onResult(result);
+        });
+    }
+
+    public void refreshTokenWithApi(AuthService.ResultCallback<Map<String, String>> callback) {
+        if (authService == null) {
+            authService = new AuthService();
+        }
+        if (refreshToken != null) {
+            authService.refreshToken(refreshToken, result -> {
+                if (result.isSuccess()) {
+                    Map<String, String> response = result.getData();
+                    String newAccessToken = response.get("accessToken");
+                    if (newAccessToken != null) {
+                        accessToken = newAccessToken;
+                        // Save updated token to preferences
+                        if (authPreferences != null && currentMockUser.getValue() != null) {
+                            authPreferences.saveMockUser(currentMockUser.getValue(), accessToken, refreshToken);
+                        }
+                    }
+                }
+                callback.onResult(result);
+            });
+        } else {
+            callback.onResult(Result.error("No refresh token available"));
+        }
+    }
+
+    public void logoutWithApi(AuthService.ResultCallback<Map<String, String>> callback) {
+        if (authService == null) {
+            authService = new AuthService();
+        }
+        authService.logout(result -> {
+            // Always clear local data regardless of API response
+            signOut();
+            callback.onResult(result);
+        });
+    }
+
+    // Firebase Auth methods (for new users - hybrid backend)
+    public void firebaseRegisterWithApi(String email, String password, String fullname, AuthService.ResultCallback<Map<String, Object>> callback) {
+        if (authService == null) {
+            authService = new AuthService();
+        }
+        authService.firebaseRegister(email, password, fullname, result -> {
+            if (result.isSuccess()) {
+                Map<String, Object> response = result.getData();
+                String customToken = (String) response.get("customToken");
+
+                if (customToken != null) {
+                    // Sign in with Firebase using custom token
+                    mAuth.signInWithCustomToken(customToken)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("AuthViewModel", "Firebase custom token sign in success");
+                                // Extract user data from response
+                                @SuppressWarnings("unchecked")
+                                Map<String, Object> userData = (Map<String, Object>) response.get("user");
+                                if (userData != null) {
+                                    // Create UserDto from response
+                                    UserDto user = createUserDtoFromFirebaseResponse(userData);
+                                    setMockUser(user, customToken, null); // Firebase users don't use refresh tokens
+                                }
+                                callback.onResult(result);
+                            } else {
+                                Log.e("AuthViewModel", "Firebase custom token sign in failed", task.getException());
+                                callback.onResult(Result.error("Đăng ký thành công nhưng đăng nhập Firebase thất bại"));
+                            }
+                        });
+                } else {
+                    callback.onResult(Result.error("Không nhận được custom token"));
+                }
+            } else {
+                callback.onResult(result);
+            }
+        });
+    }
+
+    public void firebaseLoginWithApi(String email, String password, AuthService.ResultCallback<Map<String, Object>> callback) {
+        if (authService == null) {
+            authService = new AuthService();
+        }
+        authService.firebaseLogin(email, password, result -> {
+            if (result.isSuccess()) {
+                Map<String, Object> response = result.getData();
+                String customToken = (String) response.get("customToken");
+
+                if (customToken != null) {
+                    // Sign in with Firebase using custom token
+                    mAuth.signInWithCustomToken(customToken)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("AuthViewModel", "Firebase custom token sign in success");
+                                // Extract user data from response
+                                @SuppressWarnings("unchecked")
+                                Map<String, Object> userData = (Map<String, Object>) response.get("user");
+                                if (userData != null) {
+                                    UserDto user = createUserDtoFromFirebaseResponse(userData);
+                                    setMockUser(user, customToken, null);
+                                }
+                                callback.onResult(result);
+                            } else {
+                                Log.e("AuthViewModel", "Firebase custom token sign in failed", task.getException());
+                                callback.onResult(Result.error("Đăng nhập thành công nhưng xác thực Firebase thất bại"));
+                            }
+                        });
+                } else {
+                    callback.onResult(Result.error("Không nhận được custom token"));
+                }
+            } else {
+                callback.onResult(result);
+            }
+        });
+    }
+
+    public void firebaseGoogleLoginWithApi(String idToken, AuthService.ResultCallback<Map<String, Object>> callback) {
+        if (authService == null) {
+            authService = new AuthService();
+        }
+        authService.firebaseGoogleLogin(idToken, result -> {
+            if (result.isSuccess()) {
+                Map<String, Object> response = result.getData();
+                // For Google login, we don't get a custom token, just user data
+                // Firebase Auth state will be updated automatically
+                @SuppressWarnings("unchecked")
+                Map<String, Object> userData = (Map<String, Object>) response.get("user");
+                if (userData != null) {
+                    UserDto user = createUserDtoFromFirebaseResponse(userData);
+                    setMockUser(user, idToken, null);
+                }
+                callback.onResult(result);
+            } else {
+                callback.onResult(result);
+            }
+        });
+    }
+
+    public void firebaseLogoutWithApi(AuthService.ResultCallback<Map<String, String>> callback) {
+        if (authService == null) {
+            authService = new AuthService();
+        }
+        authService.firebaseLogout(result -> {
+            // Always clear local data regardless of API response
+            signOut();
+            callback.onResult(result);
+        });
+    }
+
+    private UserDto createUserDtoFromFirebaseResponse(Map<String, Object> userData) {
+        UserDto user = new UserDto();
+        user.setId((String) userData.get("id"));
+        user.setEmail((String) userData.get("email"));
+        user.setFullname((String) userData.get("fullname"));
+        user.setUsername((String) userData.get("username"));
+        user.setAvatar((String) userData.get("avatar"));
+        // Note: Firebase users don't have role/staffId in the same way, but we can set defaults
+        return user;
+    }
+
     public void signOut() {
         // Sign out from Firebase
         mAuth.signOut();

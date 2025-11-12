@@ -12,10 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.chillcup02_ui.R;
-import com.example.chillcup02_ui.data.api.MockAuthService;
 import com.example.chillcup02_ui.data.dto.AuthResponse;
 import com.example.chillcup02_ui.data.dto.LoginRequest;
 import com.example.chillcup02_ui.data.dto.RegisterRequest;
+import com.example.chillcup02_ui.data.dto.RegisterResponse;
 import com.example.chillcup02_ui.data.dto.VerifyOtpRequest;
 import com.example.chillcup02_ui.databinding.ActivityLoginBinding;
 import com.example.chillcup02_ui.ui.auth.AuthViewModel;
@@ -43,7 +43,6 @@ public class    LoginActivity extends BaseActivity {
     private ActivityLoginBinding binding;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
-    private MockAuthService mockAuthService;
     private AuthViewModel authViewModel;
     
     private String pendingRegisterEmail;
@@ -59,10 +58,7 @@ public class    LoginActivity extends BaseActivity {
         
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        
-        // Initialize Mock Auth Service
-        mockAuthService = MockAuthService.getInstance();
-        
+
         // Initialize AuthViewModel
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         authViewModel.init(this);
@@ -198,16 +194,9 @@ public class    LoginActivity extends BaseActivity {
         showProgress(true);
         
         LoginRequest request = new LoginRequest(usernameOrEmail, password);
-        mockAuthService.login(request, result -> {
+        authViewModel.loginWithApi(request, result -> {
             showProgress(false);
             if (result.isSuccess()) {
-                AuthResponse response = result.getData();
-                // Save user info to ViewModel
-                authViewModel.setMockUser(
-                    response.getUser(),
-                    response.getAccessToken(),
-                    response.getRefreshToken()
-                );
                 Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 navigateToMain();
             } else {
@@ -217,39 +206,39 @@ public class    LoginActivity extends BaseActivity {
     }
     
     private void handleSignUp() {
-        String fullname = binding.etFullname.getText() != null 
-                ? binding.etFullname.getText().toString().trim() 
+        String fullname = binding.etFullname.getText() != null
+                ? binding.etFullname.getText().toString().trim()
                 : "";
-        String username = binding.etSignUpUsername.getText() != null 
-                ? binding.etSignUpUsername.getText().toString().trim() 
+        String username = binding.etSignUpUsername.getText() != null
+                ? binding.etSignUpUsername.getText().toString().trim()
                 : "";
-        String email = binding.etSignUpEmail.getText() != null 
-                ? binding.etSignUpEmail.getText().toString().trim() 
+        String email = binding.etSignUpEmail.getText() != null
+                ? binding.etSignUpEmail.getText().toString().trim()
                 : "";
-        String password = binding.etSignUpPassword.getText() != null 
-                ? binding.etSignUpPassword.getText().toString() 
+        String password = binding.etSignUpPassword.getText() != null
+                ? binding.etSignUpPassword.getText().toString()
                 : "";
-        String confirmPassword = binding.etConfirmPassword.getText() != null 
-                ? binding.etConfirmPassword.getText().toString() 
+        String confirmPassword = binding.etConfirmPassword.getText() != null
+                ? binding.etConfirmPassword.getText().toString()
                 : "";
-        
+
         // Validate
         boolean hasError = false;
-        
+
         if (TextUtils.isEmpty(fullname)) {
             binding.tilFullname.setError("Vui lòng nhập họ tên");
             hasError = true;
         } else {
             binding.tilFullname.setError(null);
         }
-        
+
         if (TextUtils.isEmpty(username)) {
             binding.tilSignUpUsername.setError("Vui lòng nhập username");
             hasError = true;
         } else {
             binding.tilSignUpUsername.setError(null);
         }
-        
+
         if (TextUtils.isEmpty(email)) {
             binding.tilSignUpEmail.setError("Vui lòng nhập email");
             hasError = true;
@@ -259,7 +248,7 @@ public class    LoginActivity extends BaseActivity {
         } else {
             binding.tilSignUpEmail.setError(null);
         }
-        
+
         if (TextUtils.isEmpty(password)) {
             binding.tilSignUpPassword.setError("Vui lòng nhập mật khẩu");
             hasError = true;
@@ -269,7 +258,7 @@ public class    LoginActivity extends BaseActivity {
         } else {
             binding.tilSignUpPassword.setError(null);
         }
-        
+
         if (TextUtils.isEmpty(confirmPassword)) {
             binding.tilConfirmPassword.setError("Vui lòng xác nhận mật khẩu");
             hasError = true;
@@ -279,22 +268,19 @@ public class    LoginActivity extends BaseActivity {
         } else {
             binding.tilConfirmPassword.setError(null);
         }
-        
+
         if (hasError) {
             return;
         }
-        
+
         showProgress(true);
-        
-        RegisterRequest request = new RegisterRequest(fullname, username, email, password);
-        mockAuthService.register(request, result -> {
+
+        // Use Firebase Auth for new users (hybrid backend)
+        authViewModel.firebaseRegisterWithApi(email, password, fullname, result -> {
             showProgress(false);
             if (result.isSuccess()) {
-                pendingRegisterEmail = email;
-                String message = result.getData().getMessage();
-                binding.tvOtpMessage.setText(message);
-                showOtpForm();
-                Toast.makeText(this, "Vui lòng kiểm tra email để lấy mã OTP", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                navigateToMain();
             } else {
                 Toast.makeText(this, result.getError(), Toast.LENGTH_SHORT).show();
             }
@@ -322,16 +308,9 @@ public class    LoginActivity extends BaseActivity {
         showProgress(true);
         
         VerifyOtpRequest request = new VerifyOtpRequest(pendingRegisterEmail, otp);
-        mockAuthService.verifyOtp(request, result -> {
+        authViewModel.verifyOtpWithApi(request, result -> {
             showProgress(false);
             if (result.isSuccess()) {
-                AuthResponse response = result.getData();
-                // Save user info to ViewModel
-                authViewModel.setMockUser(
-                    response.getUser(),
-                    response.getAccessToken(),
-                    response.getRefreshToken()
-                );
                 pendingRegisterEmail = null; // Clear pending email
                 Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
                 navigateToMain();
@@ -376,25 +355,19 @@ public class    LoginActivity extends BaseActivity {
     
     private void firebaseAuthWithGoogle(String idToken) {
         showProgress(true);
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        showProgress(false);
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                            navigateToMain();
-                        } else {
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Đăng nhập Firebase thất bại: " + 
-                                    (task.getException() != null ? task.getException().getMessage() : "Unknown error"), 
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+
+        // Use our Firebase Google login API instead of direct Firebase Auth
+        authViewModel.firebaseGoogleLoginWithApi(idToken, result -> {
+            showProgress(false);
+            if (result.isSuccess()) {
+                Log.d(TAG, "Firebase Google login via API success");
+                Toast.makeText(LoginActivity.this, "Đăng nhập Google thành công!", Toast.LENGTH_SHORT).show();
+                navigateToMain();
+            } else {
+                Log.w(TAG, "Firebase Google login via API failed: " + result.getError());
+                Toast.makeText(LoginActivity.this, "Đăng nhập Google thất bại: " + result.getError(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     
     private void navigateToMain() {

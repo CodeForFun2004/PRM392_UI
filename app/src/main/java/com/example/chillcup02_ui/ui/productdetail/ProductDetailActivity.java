@@ -36,6 +36,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ImageView ivProductImage;
     private TextView tvProductName;
     private TextView tvProductRating;
+    private ImageView btnFavourite;
     private TextView tvProductPrice;
     private TextView tvProductDescription;
     private TextView tvSizeTitle;
@@ -87,11 +88,18 @@ public class ProductDetailActivity extends AppCompatActivity {
         viewModel.loadToppings();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Favourite status is checked when product is loaded, no need to check again here
+    }
+
     private void initializeViews() {
         toolbar = findViewById(R.id.toolbar);
         ivProductImage = findViewById(R.id.ivProductImage);
         tvProductName = findViewById(R.id.tvProductName);
         tvProductRating = findViewById(R.id.tvProductRating);
+        btnFavourite = findViewById(R.id.btnFavourite);
         tvProductPrice = findViewById(R.id.tvProductPrice);
         tvProductDescription = findViewById(R.id.tvProductDescription);
         tvSizeTitle = findViewById(R.id.tvSizeTitle);
@@ -173,6 +181,16 @@ public class ProductDetailActivity extends AppCompatActivity {
                 tvError.setVisibility(View.GONE);
             }
         });
+
+        viewModel.getFavouriteMessage().observe(this, message -> {
+            if (message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        viewModel.getIsFavourite().observe(this, isFavourite -> {
+            updateFavouriteIcon(isFavourite != null ? isFavourite : false);
+        });
     }
 
     private void setupClickListeners() {
@@ -183,6 +201,12 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnIncreaseQuantity.setOnClickListener(v -> {
             playScaleAnimation(v);
             increaseQuantity();
+        });
+
+        btnFavourite.setOnClickListener(v -> {
+            if (productId != null) {
+                viewModel.toggleFavourite(productId);
+            }
         });
 
         btnAddToCart.setOnClickListener(v -> {
@@ -293,6 +317,18 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void updateAccessibilityDescription() {
         if (tvQuantity != null) {
             tvQuantity.setContentDescription("Số lượng: " + selectedQuantity + " ly");
+        }
+    }
+
+    private void updateFavouriteIcon(boolean isFavourite) {
+        if (btnFavourite != null) {
+            if (isFavourite) {
+                btnFavourite.setImageResource(android.R.drawable.btn_star_big_on);
+                btnFavourite.setColorFilter(getResources().getColor(R.color.primary_green));
+            } else {
+                btnFavourite.setImageResource(android.R.drawable.btn_star_big_off);
+                btnFavourite.setColorFilter(null);
+            }
         }
     }
 
