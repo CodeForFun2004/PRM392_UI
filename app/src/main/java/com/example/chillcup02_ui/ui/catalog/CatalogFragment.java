@@ -17,10 +17,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.chillcup02_ui.auth.LoginActivity;
+import com.example.chillcup02_ui.data.api.MockLoyaltyService;
+import com.example.chillcup02_ui.data.api.MockUserService;
+import com.example.chillcup02_ui.data.dto.LoyaltyDto;
+import com.example.chillcup02_ui.data.dto.UserDto;
 import com.example.chillcup02_ui.databinding.FragmentCatalogBinding;
 import com.example.chillcup02_ui.domain.model.Category;
 import com.example.chillcup02_ui.domain.model.Product;
 import com.example.chillcup02_ui.ui.auth.AuthViewModel;
+import com.example.chillcup02_ui.util.Result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +37,8 @@ public class CatalogFragment extends Fragment {
     private CatalogViewModel catalogViewModel;
     private CategoryAdapter categoryAdapter;
     private ProductAdapter productAdapter;
+    private MockLoyaltyService mockLoyaltyService;
+    private MockUserService mockUserService;
 
     @Nullable
     @Override
@@ -46,6 +53,8 @@ public class CatalogFragment extends Fragment {
 
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
         catalogViewModel = new ViewModelProvider(this).get(CatalogViewModel.class);
+        mockLoyaltyService = MockLoyaltyService.getInstance();
+        mockUserService = MockUserService.getInstance();
 
         setupUI();
         setupRecyclerViews();
@@ -56,18 +65,21 @@ public class CatalogFragment extends Fragment {
         catalogViewModel.loadCategories();
         catalogViewModel.loadProducts();
 
-        // Observe auth state to show/hide login button
+        // Observe auth state to show/hide login button and membership card
         authViewModel.isLoggedIn().observe(getViewLifecycleOwner(), isLoggedIn -> {
             if (isLoggedIn) {
                 binding.cardWelcome.setVisibility(View.GONE);
+                binding.cardMembership.setVisibility(View.VISIBLE);
                 String displayName = authViewModel.getUserDisplayName();
                 if (displayName != null && !displayName.isEmpty()) {
-                    binding.tvWelcome.setText("Xin chào, " + displayName + " 👋");
+                    binding.tvWelcome.setText("Chào " + displayName + " 👋");
                 } else {
                     binding.tvWelcome.setText("Xin chào bạn 👋");
                 }
+                loadMembershipInfo();
             } else {
                 binding.cardWelcome.setVisibility(View.VISIBLE);
+                binding.cardMembership.setVisibility(View.GONE);
                 binding.tvWelcome.setText("Chào bạn mới 👋");
             }
         });
@@ -77,20 +89,115 @@ public class CatalogFragment extends Fragment {
             Intent intent = new Intent(requireContext(), LoginActivity.class);
             startActivity(intent);
         });
+        
+        // Voucher button click
+        binding.btnVoucher.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), com.example.chillcup02_ui.ui.voucher.VoucherActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void setupUI() {
         if (authViewModel.isUserLoggedIn()) {
             binding.cardWelcome.setVisibility(View.GONE);
+            binding.cardMembership.setVisibility(View.VISIBLE);
             String displayName = authViewModel.getUserDisplayName();
             if (displayName != null && !displayName.isEmpty()) {
-                binding.tvWelcome.setText("Xin chào, " + displayName + " 👋");
+                binding.tvWelcome.setText("Chào " + displayName + " 👋");
             } else {
                 binding.tvWelcome.setText("Xin chào bạn 👋");
             }
+            loadMembershipInfo();
         } else {
             binding.cardWelcome.setVisibility(View.VISIBLE);
+            binding.cardMembership.setVisibility(View.GONE);
             binding.tvWelcome.setText("Chào bạn mới 👋");
+        }
+    }
+    
+    private void loadMembershipInfo() {
+        String userId = authViewModel.getUserId();
+        if (userId == null) {
+            // Try to get from email
+            String email = authViewModel.getUserEmail();
+            if (email != null) {
+                UserDto user = mockUserService.getUserByEmail(email);
+                if (user != null) {
+                    userId = user.getId();
+                }
+            }
+        }
+        
+        if (userId == null) {
+            // Fallback: use mock user from AuthViewModel
+            UserDto mockUser = authViewModel.getMockUser();
+            if (mockUser != null) {
+                userId = mockUser.getId();
+                displayMembershipInfo(mockUser, null);
+            }
+            return;
+        }
+        
+        // Store userId as final for use in lambda
+        final String finalUserId = userId;
+        
+        // Check if view is still available before making async calls
+        if (binding == null || getView() == null) {
+            return;
+        }
+        
+        // Load user info
+        mockUserService.getCurrentUser(finalUserId, userResult -> {
+            // Check if view is still available in callback
+            if (binding == null || getView() == null) {
+                return;
+            }
+            
+            final UserDto user = userResult.isSuccess() ? userResult.getData() : null;
+            
+            // Load loyalty points
+            mockLoyaltyService.getMyPoints(finalUserId, loyaltyResult -> {
+                // Check if view is still available in nested callback
+                if (binding == null || getView() == null) {
+                    return;
+                }
+                
+                LoyaltyDto loyalty = loyaltyResult.isSuccess() ? loyaltyResult.getData() : null;
+                displayMembershipInfo(user, loyalty);
+            });
+        });
+    }
+    
+    private void displayMembershipInfo(UserDto user, LoyaltyDto loyalty) {
+        // Check if view is still available
+        if (binding == null || getView() == null) {
+            return;
+        }
+        
+        if (user != null) {
+            // Display member ID (staffId)
+            if (user.getStaffId() != null && !user.getStaffId().isEmpty()) {
+                binding.tvMemberId.setText("Mã thành viên: " + user.getStaffId());
+            } else {
+                binding.tvMemberId.setText("Mã thành viên: -");
+            }
+            
+            // Determine member type based on creation date or points
+            if (loyalty != null && loyalty.getTotalPoints() > 0) {
+                binding.tvMemberType.setText("Thành viên");
+            } else {
+                binding.tvMemberType.setText("Thành viên mới");
+            }
+        } else {
+            binding.tvMemberId.setText("Mã thành viên: -");
+            binding.tvMemberType.setText("Thành viên mới");
+        }
+        
+        // Display points
+        if (loyalty != null && loyalty.getTotalPoints() != null) {
+            binding.tvPoints.setText(loyalty.getTotalPoints() + " PI");
+        } else {
+            binding.tvPoints.setText("0 PI");
         }
     }
 

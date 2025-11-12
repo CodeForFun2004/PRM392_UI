@@ -4,9 +4,9 @@
     <color name="white">#FFFFFFFF</color>
     
     <!-- ChillCup Theme Colors -->
-    <color name="primary_green">#2E7D32</color>
-    <color name="primary_green_light">#4CAF50</color>
-    <color name="primary_green_dark">#1B5E20</color>
+    <color name="primary_green">#FF0DBD62</color>
+    <color name="primary_green_light">#FF4FE88A</color>
+    <color name="primary_green_dark">#FF0A9A4E</color>
     <color name="accent_orange">#FF9800</color>
     <color name="background_light">#FAFAFA</color>
     <color name="text_primary">#212121</color>
