@@ -2,6 +2,7 @@ package com.example.chillcup02_ui.data.api;
 
 import com.example.chillcup02_ui.data.dto.AuthResponse;
 import com.example.chillcup02_ui.data.dto.CategoryDto;
+import com.example.chillcup02_ui.data.dto.DiscountDto;
 import com.example.chillcup02_ui.data.dto.FavouriteDto;
 import com.example.chillcup02_ui.data.dto.LoginRequest;
 import com.example.chillcup02_ui.data.dto.ProductDto;
@@ -83,4 +84,8 @@ public interface ApiService {
 
     @POST("/api/favourites/toggle")
     Call<Map<String, Object>> toggleFavourite(@Body Map<String, String> request);
+
+    // Discount endpoints
+    @GET("/api/discounts")
+    Call<List<DiscountDto>> getAllDiscounts();
 }

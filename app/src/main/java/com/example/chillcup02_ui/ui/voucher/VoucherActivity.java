@@ -1,6 +1,7 @@
 package com.example.chillcup02_ui.ui.voucher;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -10,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chillcup02_ui.R;
-import com.example.chillcup02_ui.data.api.MockDiscountService;
+import com.example.chillcup02_ui.data.api.DiscountService;
 import com.example.chillcup02_ui.data.dto.DiscountDto;
 import com.example.chillcup02_ui.databinding.ActivityVoucherBinding;
 import com.example.chillcup02_ui.ui.auth.AuthViewModel;
@@ -21,12 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VoucherActivity extends BaseActivity {
-    
+
     private ActivityVoucherBinding binding;
     private AuthViewModel authViewModel;
-    private MockDiscountService mockDiscountService;
+    private DiscountService discountService;
     private VoucherAdapter voucherAdapter;
-    private String currentFilter = "false"; // "false" = Có thể sử dụng, "true" = Đã sử dụng
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +38,9 @@ public class VoucherActivity extends BaseActivity {
         applyWindowInsets(binding.getRoot());
         
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
-        mockDiscountService = MockDiscountService.getInstance();
+        discountService = DiscountService.getInstance();
         
         setupToolbar();
-        setupTabs();
         setupRecyclerView();
         loadVouchers();
     }
@@ -50,52 +49,10 @@ public class VoucherActivity extends BaseActivity {
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Vouchers của bạn");
+            getSupportActionBar().setTitle("Mã giảm giá");
         }
-        
+
         binding.toolbar.setNavigationOnClickListener(v -> finish());
-    }
-    
-    private void setupTabs() {
-        // Tab "Có thể sử dụng"
-        binding.tabUsable.setOnClickListener(v -> {
-            if (!"false".equals(currentFilter)) {
-                currentFilter = "false";
-                updateTabSelection();
-                loadVouchers();
-            }
-        });
-        
-        // Tab "Đã sử dụng"
-        binding.tabUsed.setOnClickListener(v -> {
-            if (!"true".equals(currentFilter)) {
-                currentFilter = "true";
-                updateTabSelection();
-                loadVouchers();
-            }
-        });
-        
-        updateTabSelection();
-    }
-    
-    private void updateTabSelection() {
-        if ("false".equals(currentFilter)) {
-            // Có thể sử dụng selected
-            binding.tabUsable.setBackgroundResource(R.drawable.badge_new_background);
-            binding.tabUsable.setBackgroundTintList(getColorStateList(R.color.primary_green));
-            binding.tabUsable.setTextColor(getColor(R.color.white));
-            
-            binding.tabUsed.setBackground(null);
-            binding.tabUsed.setTextColor(getColor(R.color.text_secondary));
-        } else {
-            // Đã sử dụng selected
-            binding.tabUsed.setBackgroundResource(R.drawable.badge_new_background);
-            binding.tabUsed.setBackgroundTintList(getColorStateList(R.color.primary_green));
-            binding.tabUsed.setTextColor(getColor(R.color.white));
-            
-            binding.tabUsable.setBackground(null);
-            binding.tabUsable.setTextColor(getColor(R.color.text_secondary));
-        }
     }
     
     private void setupRecyclerView() {
@@ -105,50 +62,40 @@ public class VoucherActivity extends BaseActivity {
     }
     
     private void loadVouchers() {
+        Log.d("VoucherActivity", "🎯 [UI] loadVouchers called");
+
         // Check if view is still available
         if (binding == null || getWindow() == null) {
+            Log.w("VoucherActivity", "⚠️ [UI] View not available, skipping loadVouchers");
             return;
         }
-        
-        String userId = authViewModel.getUserId();
-        if (userId == null) {
-            // Try to get from mock user
-            com.example.chillcup02_ui.data.dto.UserDto mockUser = authViewModel.getMockUser();
-            if (mockUser != null) {
-                userId = mockUser.getId();
-            }
-        }
-        
-        if (userId == null) {
-            Toast.makeText(this, "Vui lòng đăng nhập để xem vouchers", Toast.LENGTH_SHORT).show();
-            if (voucherAdapter != null) {
-                voucherAdapter.setVouchers(new ArrayList<>());
-            }
-            return;
-        }
-        
+
+        Log.d("VoucherActivity", "🚀 [UI] Starting API call to get all global discounts");
         binding.progressBar.setVisibility(View.VISIBLE);
-        
-        final String finalUserId = userId;
-        mockDiscountService.getUserDiscounts(finalUserId, currentFilter, result -> {
+
+        discountService.getAllDiscounts(result -> {
+            Log.d("VoucherActivity", "📨 [UI] Received API callback - success: " + result.isSuccess());
+
             // Check if view is still available in callback
             if (binding == null || getWindow() == null) {
+                Log.w("VoucherActivity", "⚠️ [UI] View destroyed, ignoring callback");
                 return;
             }
-            
+
             binding.progressBar.setVisibility(View.GONE);
-            
+
             if (result.isSuccess()) {
                 List<DiscountDto> vouchers = result.getData();
+                Log.d("VoucherActivity", "✅ [UI] Successfully loaded " + (vouchers != null ? vouchers.size() : 0) + " global discounts");
                 if (vouchers != null && voucherAdapter != null) {
                     voucherAdapter.setVouchers(vouchers);
                 } else if (voucherAdapter != null) {
                     voucherAdapter.setVouchers(new ArrayList<>());
                 }
             } else {
-                Toast.makeText(VoucherActivity.this, 
-                        result.getError() != null ? result.getError() : "Không thể tải vouchers", 
-                        Toast.LENGTH_SHORT).show();
+                String errorMsg = result.getError() != null ? result.getError() : "Không thể tải mã giảm giá";
+                Log.e("VoucherActivity", "❌ [UI] Failed to load discounts: " + errorMsg);
+                Toast.makeText(VoucherActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
                 if (voucherAdapter != null) {
                     voucherAdapter.setVouchers(new ArrayList<>());
                 }
@@ -162,4 +109,3 @@ public class VoucherActivity extends BaseActivity {
         binding = null;
     }
 }
-
