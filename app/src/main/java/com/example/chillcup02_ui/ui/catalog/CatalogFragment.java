@@ -17,9 +17,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.chillcup02_ui.auth.LoginActivity;
-import com.example.chillcup02_ui.data.api.MockLoyaltyService;
+import com.example.chillcup02_ui.data.api.LoyaltyService;
 import com.example.chillcup02_ui.data.api.MockUserService;
-import com.example.chillcup02_ui.data.dto.LoyaltyDto;
 import com.example.chillcup02_ui.data.dto.UserDto;
 import com.example.chillcup02_ui.databinding.FragmentCatalogBinding;
 import com.example.chillcup02_ui.domain.model.Category;
@@ -37,7 +36,7 @@ public class CatalogFragment extends Fragment {
     private CatalogViewModel catalogViewModel;
     private CategoryAdapter categoryAdapter;
     private ProductAdapter productAdapter;
-    private MockLoyaltyService mockLoyaltyService;
+    private LoyaltyService loyaltyService;
     private MockUserService mockUserService;
 
     @Nullable
@@ -53,7 +52,7 @@ public class CatalogFragment extends Fragment {
 
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
         catalogViewModel = new ViewModelProvider(this).get(CatalogViewModel.class);
-        mockLoyaltyService = MockLoyaltyService.getInstance();
+        loyaltyService = LoyaltyService.getInstance();
         mockUserService = MockUserService.getInstance();
 
         setupUI();
@@ -127,53 +126,59 @@ public class CatalogFragment extends Fragment {
                 }
             }
         }
-        
+
         if (userId == null) {
             // Fallback: use mock user from AuthViewModel
             UserDto mockUser = authViewModel.getMockUser();
             if (mockUser != null) {
                 userId = mockUser.getId();
-                displayMembershipInfo(mockUser, null);
+                displayMembershipInfo(mockUser, 0);
             }
             return;
         }
-        
+
         // Store userId as final for use in lambda
         final String finalUserId = userId;
-        
+
         // Check if view is still available before making async calls
         if (binding == null || getView() == null) {
             return;
         }
-        
+
         // Load user info
         mockUserService.getCurrentUser(finalUserId, userResult -> {
             // Check if view is still available in callback
             if (binding == null || getView() == null) {
                 return;
             }
-            
+
             final UserDto user = userResult.isSuccess() ? userResult.getData() : null;
-            
-            // Load loyalty points
-            mockLoyaltyService.getMyPoints(finalUserId, loyaltyResult -> {
+
+            // Load loyalty points from API
+            loyaltyService.getMyPoints(pointsResult -> {
                 // Check if view is still available in nested callback
                 if (binding == null || getView() == null) {
                     return;
                 }
-                
-                LoyaltyDto loyalty = loyaltyResult.isSuccess() ? loyaltyResult.getData() : null;
-                displayMembershipInfo(user, loyalty);
+
+                Integer totalPoints = 0;
+                if (pointsResult.isSuccess() && pointsResult.getData() != null) {
+                    totalPoints = pointsResult.getData().get("totalPoints");
+                    if (totalPoints == null) {
+                        totalPoints = 0;
+                    }
+                }
+                displayMembershipInfo(user, totalPoints);
             });
         });
     }
     
-    private void displayMembershipInfo(UserDto user, LoyaltyDto loyalty) {
+    private void displayMembershipInfo(UserDto user, Integer totalPoints) {
         // Check if view is still available
         if (binding == null || getView() == null) {
             return;
         }
-        
+
         if (user != null) {
             // Display member ID (staffId)
             if (user.getStaffId() != null && !user.getStaffId().isEmpty()) {
@@ -181,9 +186,9 @@ public class CatalogFragment extends Fragment {
             } else {
                 binding.tvMemberId.setText("Mã thành viên: -");
             }
-            
-            // Determine member type based on creation date or points
-            if (loyalty != null && loyalty.getTotalPoints() > 0) {
+
+            // Determine member type based on points
+            if (totalPoints != null && totalPoints > 0) {
                 binding.tvMemberType.setText("Thành viên");
             } else {
                 binding.tvMemberType.setText("Thành viên mới");
@@ -192,10 +197,10 @@ public class CatalogFragment extends Fragment {
             binding.tvMemberId.setText("Mã thành viên: -");
             binding.tvMemberType.setText("Thành viên mới");
         }
-        
+
         // Display points
-        if (loyalty != null && loyalty.getTotalPoints() != null) {
-            binding.tvPoints.setText(loyalty.getTotalPoints() + " PI");
+        if (totalPoints != null) {
+            binding.tvPoints.setText(totalPoints + " PI");
         } else {
             binding.tvPoints.setText("0 PI");
         }
