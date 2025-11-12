@@ -88,6 +88,12 @@ public class ProductDetailActivity extends AppCompatActivity {
         viewModel.loadToppings();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Favourite status is checked when product is loaded, no need to check again here
+    }
+
     private void initializeViews() {
         toolbar = findViewById(R.id.toolbar);
         ivProductImage = findViewById(R.id.ivProductImage);
@@ -174,6 +180,16 @@ public class ProductDetailActivity extends AppCompatActivity {
             } else {
                 tvError.setVisibility(View.GONE);
             }
+        });
+
+        viewModel.getFavouriteMessage().observe(this, message -> {
+            if (message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        viewModel.getIsFavourite().observe(this, isFavourite -> {
+            updateFavouriteIcon(isFavourite != null ? isFavourite : false);
         });
     }
 
@@ -301,6 +317,18 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void updateAccessibilityDescription() {
         if (tvQuantity != null) {
             tvQuantity.setContentDescription("Số lượng: " + selectedQuantity + " ly");
+        }
+    }
+
+    private void updateFavouriteIcon(boolean isFavourite) {
+        if (btnFavourite != null) {
+            if (isFavourite) {
+                btnFavourite.setImageResource(android.R.drawable.btn_star_big_on);
+                btnFavourite.setColorFilter(getResources().getColor(R.color.primary_green));
+            } else {
+                btnFavourite.setImageResource(android.R.drawable.btn_star_big_off);
+                btnFavourite.setColorFilter(null);
+            }
         }
     }
 

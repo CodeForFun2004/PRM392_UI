@@ -46,11 +46,12 @@ public class FavouriteRepository {
     }
 
     public void getMyFavourites(RepositoryCallback<List<Favourite>> callback) {
-        apiService.getMyFavourites().enqueue(new Callback<List<FavouriteDto>>() {
+        apiService.getMyFavourites().enqueue(new Callback<FavouriteDto.FavouritesResponse>() {
             @Override
-            public void onResponse(Call<List<FavouriteDto>> call, Response<List<FavouriteDto>> response) {
+            public void onResponse(Call<FavouriteDto.FavouritesResponse> call, Response<FavouriteDto.FavouritesResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Favourite> favourites = FavouriteMapper.toDomainList(response.body());
+                    List<FavouriteDto> favouriteDtos = response.body().getFavourites();
+                    List<Favourite> favourites = FavouriteMapper.toDomainList(favouriteDtos);
                     callback.onSuccess(favourites);
                 } else {
                     callback.onError("Failed to load favourites");
@@ -58,7 +59,7 @@ public class FavouriteRepository {
             }
 
             @Override
-            public void onFailure(Call<List<FavouriteDto>> call, Throwable t) {
+            public void onFailure(Call<FavouriteDto.FavouritesResponse> call, Throwable t) {
                 callback.onError("Network error: " + t.getMessage());
             }
         });
@@ -94,9 +95,11 @@ public class FavouriteRepository {
                     String status = (String) responseBody.get("status");
 
                     Favourite favourite = null;
-                    if ("added".equals(status)) {
+                    if ("added".equals(status) && responseBody.containsKey("favourite")) {
+                        // For added status, we have a favourite object
+                        // Note: The backend returns the favourite, but for simplicity we'll create a basic one
                         favourite = new Favourite();
-                        favourite.setProduct(null);
+                        favourite.setProduct(null); // Will be populated when fetching favourites
                     }
 
                     ToggleResult result = new ToggleResult(favourite, status);

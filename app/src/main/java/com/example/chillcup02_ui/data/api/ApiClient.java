@@ -18,7 +18,7 @@ public class ApiClient {
         "http://localhost:8080"     // Direct localhost (for testing)
     };
 
-    private static final String BASE_URL = "http://10.0.2.2:8080"; // Default to emulator
+    private static final String BASE_URL = "http://10.0.2.2:8080"; // Android emulator to localhost
     private static Retrofit retrofit = null;
     private static Context appContext = null;
 
@@ -34,7 +34,8 @@ public class ApiClient {
 
             // Create OkHttp client
             OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
-                    .addInterceptor(logging);
+                    .addInterceptor(logging)
+                    .addInterceptor(new MockInterceptor()); // Re-enabled with favourites skipped
 
             // Add auth interceptor if context is available
             if (appContext != null) {

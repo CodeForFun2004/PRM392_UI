@@ -63,7 +63,7 @@ public interface ApiService {
     Call<Map<String, Object>> addFavourite(@Body Map<String, String> request);
 
     @GET("/api/favourites")
-    Call<List<FavouriteDto>> getMyFavourites();
+    Call<FavouriteDto.FavouritesResponse> getMyFavourites();
 
     @DELETE("/api/favourites/{productId}")
     Call<Map<String, String>> removeFavourite(@Path("productId") String productId);

@@ -114,4 +114,33 @@ public class ProductMapper {
 
         return dto;
     }
+
+    // Handle FavouriteProductDto (where sizeOptions/toppingOptions are strings)
+    public static Product toDomainFromFavourite(com.example.chillcup02_ui.data.dto.FavouriteDto.FavouriteProductDto dto) {
+        if (dto == null) return null;
+
+        Product product = new Product();
+        product.setId(dto.getId());
+        product.setName(dto.getName());
+        product.setDescription(dto.getDescription());
+        product.setBasePrice(dto.getBasePrice());
+        product.setImage(dto.getImage());
+        product.setStatus(dto.getStatus());
+        product.setRating(dto.getRating());
+        product.setBanned(dto.isBanned());
+
+        // For favourites, we don't need full size/topping objects, just set to null
+        product.setSizeOptions(new ArrayList<>()); // Empty list
+        product.setToppingOptions(new ArrayList<>()); // Empty list
+
+        // Store name
+        if (dto.getStoreId() != null) {
+            product.setStoreName(dto.getStoreId());
+        }
+
+        // Categories as strings - we can't map to full Category objects without API calls
+        product.setCategories(new ArrayList<>()); // Empty list for favourites
+
+        return product;
+    }
 }

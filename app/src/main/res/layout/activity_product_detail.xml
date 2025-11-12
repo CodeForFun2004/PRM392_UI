@@ -53,60 +53,77 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <TextView
-                android:id="@+id/tvProductName"
+            <!-- Header row: Name + Favorite on left, Price on right -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/headerRow"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Product Name"
-                android:textColor="@color/text_primary"
-                android:textSize="24sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
+                <!-- Product name - takes available space -->
+                <TextView
+                    android:id="@+id/tvProductName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Matcha Yuzu"
+                    android:textColor="@color/text_primary"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/btnFavourite"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- Favorite icon next to name -->
+                <ImageView
+                    android:id="@+id/btnFavourite"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@android:drawable/btn_star_big_off"
+                    android:contentDescription="Thêm vào yêu thích"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:layout_constraintEnd_toStartOf="@id/tvProductPrice"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- Price right-aligned, bold and prominent -->
+                <TextView
+                    android:id="@+id/tvProductPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="44.000đ"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rating below header row, left-aligned -->
             <TextView
                 android:id="@+id/tvProductRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="⭐ 4.5"
+                android:text="⭐ 4.8"
                 android:textColor="@color/text_secondary"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvProductName" />
-
-            <ImageView
-                android:id="@+id/btnFavourite"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:src="@android:drawable/btn_star_big_off"
-                android:contentDescription="Thêm vào yêu thích"
-                android:clickable="true"
-                android:focusable="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvProductName" />
-
-            <TextView
-                android:id="@+id/tvProductPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="25,000 VND"
-                android:textColor="@color/primary_green"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvProductName" />
+                app:layout_constraintTop_toBottomOf="@id/headerRow" />
 
             <TextView
                 android:id="@+id/tvProductDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Product description goes here..."
+                android:text="Mô tả sản phẩm tiếng Việt..."
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"

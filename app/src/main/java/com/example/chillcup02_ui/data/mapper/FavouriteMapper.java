@@ -14,7 +14,7 @@ public class FavouriteMapper {
         Favourite favourite = new Favourite();
         favourite.setId(dto.getId());
         favourite.setUserId(dto.getUserId());
-        favourite.setProduct(ProductMapper.toDomain(dto.getProduct()));
+        favourite.setProduct(ProductMapper.toDomainFromFavourite(dto.getProduct()));
         favourite.setCreatedAt(dto.getCreatedAt());
 
         return favourite;
@@ -26,7 +26,8 @@ public class FavouriteMapper {
         FavouriteDto dto = new FavouriteDto();
         dto.setId(domain.getId());
         dto.setUserId(domain.getUserId());
-        dto.setProduct(ProductMapper.toDto(domain.getProduct()));
+        // Note: We don't convert back to FavouriteProductDto as we don't send favourites to server
+        dto.setProduct(null);
         dto.setCreatedAt(domain.getCreatedAt());
 
         return dto;
