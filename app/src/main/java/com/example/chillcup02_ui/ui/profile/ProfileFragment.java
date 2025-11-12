@@ -79,7 +79,13 @@ public class ProfileFragment extends Fragment {
         });
         
         binding.btnFavourites.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Tính năng sản phẩm yêu thích sẽ được phát triển sau", Toast.LENGTH_SHORT).show();
+            // Navigate to FavouritesFragment
+            FavouritesFragment favouritesFragment = new FavouritesFragment();
+            requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, favouritesFragment)
+                .addToBackStack(null)
+                .commit();
         });
 
         binding.btnOrderHistory.setOnClickListener(v -> {
